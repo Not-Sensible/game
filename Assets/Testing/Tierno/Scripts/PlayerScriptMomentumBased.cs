@@ -11,11 +11,10 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
     private Rigidbody2D rig2d;
     private Animator animy;
     //These lot are used to define what the player is touching
-    public Transform TouchingTerrain;
+   // public Transform TouchingTerrain;
     public float GroundCheckRadius;
     public LayerMask CollideList; //Temporary, dimension shifting will require lots of these, although I can imagine more blunt ways of doing it
     private bool onGround;
-    private int switcher;
     private float timeLeft;
     private char Direction; //Used to define the direction of the player in human terms
 
@@ -24,26 +23,27 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
     public Quaternion[] angles;
     // Use this for initialization
     void Start () {
-        rig2d = GetComponent<Rigidbody2D>();
-        animy = GetComponent<Animator>();
+        rig2d = GetComponent<Rigidbody2D>();  //Enables the RigidBody2d component
+        animy = GetComponent<Animator>();   //Allows the animator to work
         CreateLists();
     }
    
-    public void CreateLists()
+    public void CreateLists()  //They had to be here because I have no clue what this excuse of a language defines as scope
     {
-        angles = new Quaternion[] { Quaternion.identity, Quaternion.identity, Quaternion.identity };
-        angles[0].eulerAngles = new Vector3(0f, 0f, 10f);
-        angles[1].eulerAngles = new Vector3(0f, 0f, 20f);
-        angles[2].eulerAngles = new Vector3(0f, 0f, 30f);
+        angles = new Quaternion[] { Quaternion.identity, Quaternion.identity, Quaternion.identity };  //Creating a list with the angles, more for convinience than having a load of random variable names
+        angles[0].eulerAngles = new Vector3(0f, 0f, 10f);  //10 degrees
+        angles[1].eulerAngles = new Vector3(0f, 0f, 20f);  //20 degrees
+        angles[2].eulerAngles = new Vector3(0f, 0f, 30f);  //30 degrees    
+                                                           //Add more I guess 
     }
     public void MoveTo(Vector2 pos)  //Not actually used, could be useful
     {
         transform.position = pos;
     }
 
-    void checks()
+    void checks() //Clock is here, pretty useless really, should be reliant on something else.
     {
-        onGround = Physics2D.OverlapCircle(TouchingTerrain.position, GroundCheckRadius, CollideList); //Code to work out if the player is on terrain or not
+        //onGround = Physics2D.OverlapCircle(TouchingTerrain.position, GroundCheckRadius, CollideList); //Code to work out if the player is on terrain or not
         if (timeLeft > 0f)
         {
             clock();
@@ -100,43 +100,37 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
 
     void Momentum()
     {
-        rotation = angles[0];
-        Quaternion.Inverse(rotation);
-        if (transform.eulerAngles.z==0)
+        if (transform.eulerAngles.z==0)   //If on a flat plane, resort to the default main speed
         {
             RealMaxSpeed= maxspeed;
           //  Debug.Log("Why not?");
         }
-        if(transform.eulerAngles.z==angles[0].eulerAngles.z)
+        if(transform.eulerAngles.z==angles[0].eulerAngles.z)   //If on a 10 degree slope, go a bit faster, these numbers are not permenant
         {
            RealMaxSpeed = maxspeed * 1.1f;
 
         }
-        else if(transform.eulerAngles.z==angles[1].eulerAngles.z)
+        else if(transform.eulerAngles.z==angles[1].eulerAngles.z)  //If on a 20 degree slope go faster
         {
             RealMaxSpeed = maxspeed * 1.2f;
         }
-        else if(transform.eulerAngles.z==angles[2].eulerAngles.z)
+        else if(transform.eulerAngles.z==angles[2].eulerAngles.z) //Yada yada yada
         {
             RealMaxSpeed = maxspeed * 1.3f;
         }
-        if (transform.eulerAngles.z == Quaternion.Inverse(angles[0]).eulerAngles.z)
+        if (transform.eulerAngles.z == Quaternion.Inverse(angles[0]).eulerAngles.z)  //If on a negative 20 degrees slope, do the same thing 
         {
             RealMaxSpeed = maxspeed * 1.1f;
         }
 
-        else if (transform.eulerAngles.z == Quaternion.Inverse(angles[1]).eulerAngles.z)
+        else if (transform.eulerAngles.z == Quaternion.Inverse(angles[1]).eulerAngles.z)  //yada yada yada
         {
             RealMaxSpeed = maxspeed * 1.2f;
         }
-        else if (transform.eulerAngles.z == Quaternion.Inverse(angles[2]).eulerAngles.z)
+        else if (transform.eulerAngles.z == Quaternion.Inverse(angles[2]).eulerAngles.z)  //yada
         {
             RealMaxSpeed = maxspeed * 1.3f;
         }
-
-
-        //  Debug.Log(transform.eulerAngles.z);
-        Debug.Log(RealMaxSpeed);
     }
 
     // Update is called once per frame
@@ -148,6 +142,6 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
 
     void FixedUpdate()
     {
-        checks();
+        checks();  //Checks that only need to be called once a frame, just putting here to make it look nicer.
     }
 }

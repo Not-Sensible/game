@@ -112,7 +112,7 @@ public class Player_Script : MonoBehaviour {
                     offsets[0] = offsets[0] + speed;
                 break;
             default:
-                Debug.Log("stop it");
+               // Debug.Log("stop it");
                 break;
 
         }

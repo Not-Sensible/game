@@ -222,6 +222,30 @@ Prefab:
       propertyPath: m_Mass
       value: 0.99980456
       objectReference: {fileID: 0}
+    - target: {fileID: 114976990634812772, guid: 7bc03cc3f1b38be42a4211d7590223ca,
+        type: 2}
+      propertyPath: speed
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114976990634812772, guid: 7bc03cc3f1b38be42a4211d7590223ca,
+        type: 2}
+      propertyPath: maxspeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 50708519140085344, guid: 7bc03cc3f1b38be42a4211d7590223ca,
+        type: 2}
+      propertyPath: m_GravityScale
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4141129164259416, guid: 7bc03cc3f1b38be42a4211d7590223ca, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 50708519140085344, guid: 7bc03cc3f1b38be42a4211d7590223ca,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7bc03cc3f1b38be42a4211d7590223ca, type: 2}
   m_IsPrefabParent: 0

@@ -1,0 +1,1 @@
+Whilst implementing work, create your own copy of the main Scene, move that into the testing area under its own name, commit only when it does not fuck with other people's stuff.

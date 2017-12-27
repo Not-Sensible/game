@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/Testing/Terrain Testing.unity
+  isLoaded: 1
+  isActive: 1

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq; //For the count function
 using UnityEngine;
 
 public class PlayerScriptMomentumBased : MonoBehaviour {
@@ -14,26 +15,31 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
    // public Transform TouchingTerrain;
     public float GroundCheckRadius;
     public LayerMask CollideList; //Temporary, dimension shifting will require lots of these, although I can imagine more blunt ways of doing it
+    public Transform TouchingTerrain;
     private bool onGround;
     private float timeLeft;
     private char Direction; //Used to define the direction of the player in human terms
-
-    public Quaternion rotation = Quaternion.identity;
     //public Quaternion[] angles = new Quaternion[] { Quaternion.identity, Quaternion.identity, Quaternion.identity };
     public Quaternion[] angles;
+    int bob = 0;  //Placeholder variable used for loops and such
     // Use this for initialization
     void Start () {
         rig2d = GetComponent<Rigidbody2D>();  //Enables the RigidBody2d component
         animy = GetComponent<Animator>();   //Allows the animator to work
         CreateLists();
+        RealMaxSpeed = maxspeed;
+
     }
    
     public void CreateLists()  //They had to be here because I have no clue what this excuse of a language defines as scope
     {
-        angles = new Quaternion[] { Quaternion.identity, Quaternion.identity, Quaternion.identity };  //Creating a list with the angles, more for convinience than having a load of random variable names
-        angles[0].eulerAngles = new Vector3(0f, 0f, 10f);  //10 degrees
-        angles[1].eulerAngles = new Vector3(0f, 0f, 20f);  //20 degrees
-        angles[2].eulerAngles = new Vector3(0f, 0f, 30f);  //30 degrees    
+        angles = new Quaternion[35];  //Creating a list with the angles, more for convinience than having a load of random variable names
+        for(int i=10;i<=350;i+=10)   //Angles goes up in 10 degree intervals, therefore all comparisons must be made within 10 degrees, I guess we could go up in more intervels such as 5 but this works too.
+        {
+            angles[bob]=Quaternion.Euler(0, 0, i);
+            bob += 1;
+        };
+        bob = angles.Count();
                                                            //Add more I guess 
     }
     public void MoveTo(Vector2 pos)  //Not actually used, could be useful
@@ -43,7 +49,7 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
 
     void checks() //Clock is here, pretty useless really, should be reliant on something else.
     {
-        //onGround = Physics2D.OverlapCircle(TouchingTerrain.position, GroundCheckRadius, CollideList); //Code to work out if the player is on terrain or not
+        onGround = Physics2D.OverlapCircle(TouchingTerrain.position, GroundCheckRadius, CollideList); //Code to work out if the player is on terrain or not
         if (timeLeft > 0f)
         {
             clock();
@@ -71,13 +77,15 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
 
     void Movement()
     {
-        if(Input.GetKeyDown("a"))
+        if(Input.GetKeyDown("a"))   //temporary movement system here, for testing terrain
         {
             Direction = 'L';
+            offsets[0] = -RealMaxSpeed;
         }
         else if (Input.GetKeyDown("d"))
         {
             Direction = 'R';
+            offsets[0] = RealMaxSpeed;
         }
         if (Input.GetKeyDown("space"))
         {
@@ -94,13 +102,19 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
             offsets[0] = 0;
             Direction = 'n';     //These are so temporary and just copies, it won't work with what I'm planning
         }
-
-
+        if (Direction == 'L')
+            offsets[0] = -RealMaxSpeed;
+        else if (Direction == 'R')
+            offsets[0] = RealMaxSpeed;
+        transform.Translate(offsets[0] * Time.deltaTime, 0, 0);  //Entirely Temporary
+        offsets[1] = -gravitystrength;
+        if( onGround != true)
+         transform.Translate(0, offsets[1] * Time.deltaTime, 0);
     }
 
-    void Momentum()
+    void Momentum() //Not worth looking at except for reference
     {
-        if (transform.eulerAngles.z==0)   //If on a flat plane, resort to the default main speed
+       if (transform.eulerAngles.z==0)   //If on a flat plane, resort to the default main speed
         {
             RealMaxSpeed= maxspeed;
           //  Debug.Log("Why not?");
@@ -132,11 +146,70 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
             RealMaxSpeed = maxspeed * 1.3f;
         }
     }
+    void Momentum2()
+    {
+        // if (transform.eulerAngles.z == 0)   //If on a flat plane, resort to the default main speed
+        //{
+        // RealMaxSpeed = maxspeed;
+        //Debug.Log("Why wq22?");
+        //}
+        //if (transform.eulerAngles.z>=angles[0].z && transform.eulerAngles.z<angles[1].z)
+        //{
+        //   RealMaxSpeed = maxspeed * 1.1f;
+        //    Debug.Log("Why not?");
+        //}
+        //Very Temporary. Basically just been struggling with Quaternion angles.
+        if (transform.rotation.z<angles[0].z && transform.rotation.z>-angles[0].z)
+        {
+            RealMaxSpeed = maxspeed;
+        }
+        if(transform.rotation.z>=angles[0].z && transform.rotation.z<angles[1].z || transform.rotation.z<=-angles[0].z && transform.rotation.z>-angles[1].z) //10 degrees or more go a bit faster
+        {
+            RealMaxSpeed = maxspeed * 0.9f;
+        }
+        if (transform.rotation.z >= angles[1].z && transform.rotation.z < angles[2].z || transform.rotation.z <= -angles[1].z && transform.rotation.z > -angles[2].z) //20 degrees or more go a bit faster
+        {
+            RealMaxSpeed = maxspeed * 0.8f;
+        }
+        if (transform.rotation.z >= angles[2].z && transform.rotation.z < angles[3].z || transform.rotation.z <= -angles[2].z && transform.rotation.z > -angles[3].z) //30 degrees or more go a bit faster
+        {
+            RealMaxSpeed = maxspeed * 0.7f;
+        }
+        if (transform.rotation.z >= angles[3].z && transform.rotation.z < angles[4].z || transform.rotation.z <= -angles[3].z && transform.rotation.z > -angles[4].z) //40 degrees or more go a bit faster
+        {
+            RealMaxSpeed = maxspeed * 0.6f;
+        }
+        if (transform.rotation.z >= angles[4].z && transform.rotation.z < angles[5].z || transform.rotation.z <= -angles[4].z && transform.rotation.z > -angles[5].z) //50 degrees or more go a bit faster
+        {
+            RealMaxSpeed = maxspeed * 0.5f;
+        }
+        if (transform.rotation.z >= angles[5].z && transform.rotation.z < angles[6].z || transform.rotation.z <= -angles[5].z && transform.rotation.z > -angles[6].z) //60 degrees or more go a bit faster
+        {
+            RealMaxSpeed = maxspeed * 0.4f;
+        }
+        if (transform.rotation.z >= angles[6].z && transform.rotation.z < angles[7].z || transform.rotation.z <= -angles[6].z && transform.rotation.z > -angles[7].z) //70 degrees or more go a bit faster
+        {
+            RealMaxSpeed = maxspeed * 0.3f;
+        }
+        if (transform.rotation.z >= angles[7].z && transform.rotation.z < angles[8].z || transform.rotation.z <= -angles[7].z && transform.rotation.z > -angles[8].z) //80 degrees or more go a bit faster
+        {
+            RealMaxSpeed = maxspeed * 0.2f;
+        }
+        if (transform.rotation.z >= angles[8].z && transform.rotation.z < angles[9].z || transform.rotation.z <= -angles[8].z && transform.rotation.z > -angles[9].z) //90 degrees or more go a bit faster
+        {
+            RealMaxSpeed = maxspeed * 0.1f;
+        }
 
+
+            
+
+
+    }
     // Update is called once per frame
     void Update () {
         Movement();
-        Momentum();
+        Momentum2();
+        //Momentum();
 	}
 
 

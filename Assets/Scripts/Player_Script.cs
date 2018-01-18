@@ -62,7 +62,7 @@ public class Player_Script : MonoBehaviour {
     }
     void Movement()
     {
-        Physics.gravity = new Vector3(0, 0, 0f);
+       // Physics.gravity = new Vector3(0, 0, 0f);
         if (Input.GetKeyDown("a"))
         {
             Horizontal = 'L';

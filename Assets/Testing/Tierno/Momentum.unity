@@ -1864,7 +1864,7 @@ Prefab:
     - target: {fileID: 114976990634812772, guid: 7bc03cc3f1b38be42a4211d7590223ca,
         type: 2}
       propertyPath: maxspeed
-      value: 10
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 50708519140085344, guid: 7bc03cc3f1b38be42a4211d7590223ca,
         type: 2}
@@ -1909,6 +1909,11 @@ Prefab:
         type: 2}
       propertyPath: gravitystrength
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114976990634812772, guid: 7bc03cc3f1b38be42a4211d7590223ca,
+        type: 2}
+      propertyPath: FallRate
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114802104009181024, guid: 7bc03cc3f1b38be42a4211d7590223ca, type: 2}

@@ -4,13 +4,14 @@ using System.Linq; //For the count function
 using UnityEngine;
 
 public class PlayerScriptMomentumBased : MonoBehaviour {
-    public float speed; //Base movement speed for the player
     public float maxspeed; //A maxspeed for the player, allow it to be changed by factors such as terrain type or angle
+    public float speed;
     public float RealMaxSpeed;
     public float gravitystrength; //What strength the gravity should be on angled terrain or just in general
     public Vector2 offsets; //contains the player's X and y movement
     private Rigidbody2D rig2d;
     private Animator animy;
+    public float FallRate;  //Used to control how fast the player falls down slopes
     //These lot are used to define what the player is touching
    // public Transform TouchingTerrain;
     public float GroundCheckRadius;
@@ -159,49 +160,109 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
         //    Debug.Log("Why not?");
         //}
         //Very Temporary. Basically just been struggling with Quaternion angles.
+
+
+
+
+        //Max Speed Detection Section
+        //If the player is on a plane of less than 10 degrees and more than -10 degrees
         if (transform.rotation.z<angles[0].z && transform.rotation.z>-angles[0].z)
         {
             RealMaxSpeed = maxspeed;
+            //Temporary Values, but this pulls the 
+            if (offsets[0] > 0)   
+                if (offsets[0] - 0.05f > 0f)
+                    offsets[0] += -0.05f;
+                else
+                    offsets[0] = 0;
+            else
+                if (offsets[0] + 0.05f < 0f)
+                    offsets[0] += 0.05f;
+                else
+                    offsets[0] = 0;
         }
+
+
+        //To break this down nicely, If the player's Z rotation is more than or equal to 10 or more degrees but inbetween that and 20 degrees do as said. 
+        //The second section is an OR statement that does the same thing if it's -10 degrees instead. Simples
         if(transform.rotation.z>=angles[0].z && transform.rotation.z<angles[1].z || transform.rotation.z<=-angles[0].z && transform.rotation.z>-angles[1].z) //10 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.9f;
+            if(0f+transform.rotation.z>0)  //Differentiating from the different possible directions.
+                offsets[0] += -FallRate*Time.deltaTime; //Positive angles
+            else                                    //Negative Angles
+                offsets[0] += FallRate * Time.deltaTime;
         }
         if (transform.rotation.z >= angles[1].z && transform.rotation.z < angles[2].z || transform.rotation.z <= -angles[1].z && transform.rotation.z > -angles[2].z) //20 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.8f;
+            if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
+                offsets[0] += -FallRate*1.2f * Time.deltaTime; //Positive angles
+            else                                    //Negative Angles
+                offsets[0] += FallRate * 1.2f * Time.deltaTime;
         }
         if (transform.rotation.z >= angles[2].z && transform.rotation.z < angles[3].z || transform.rotation.z <= -angles[2].z && transform.rotation.z > -angles[3].z) //30 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.7f;
+            if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
+                offsets[0] += -FallRate * 1.4f* Time.deltaTime; //Positive angles
+            else                                    //Negative Angles
+                offsets[0] += FallRate * 1.4f * Time.deltaTime;
         }
         if (transform.rotation.z >= angles[3].z && transform.rotation.z < angles[4].z || transform.rotation.z <= -angles[3].z && transform.rotation.z > -angles[4].z) //40 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.6f;
+            if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
+                offsets[0] += -FallRate * 1.6f * Time.deltaTime; //Positive angles
+            else                                    //Negative Angles
+                offsets[0] += FallRate * 1.6f * Time.deltaTime;
         }
         if (transform.rotation.z >= angles[4].z && transform.rotation.z < angles[5].z || transform.rotation.z <= -angles[4].z && transform.rotation.z > -angles[5].z) //50 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.5f;
+            if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
+                offsets[0] += -FallRate * 1.8f * Time.deltaTime; //Positive angles
+            else                                    //Negative Angles
+                offsets[0] += FallRate * 1.8f * Time.deltaTime;
         }
         if (transform.rotation.z >= angles[5].z && transform.rotation.z < angles[6].z || transform.rotation.z <= -angles[5].z && transform.rotation.z > -angles[6].z) //60 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.4f;
+            if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
+                offsets[0] += -FallRate * 2f * Time.deltaTime; //Positive angles
+            else                                    //Negative Angles
+                offsets[0] += FallRate * 2f * Time.deltaTime;
         }
         if (transform.rotation.z >= angles[6].z && transform.rotation.z < angles[7].z || transform.rotation.z <= -angles[6].z && transform.rotation.z > -angles[7].z) //70 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.3f;
+            if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
+                offsets[0] += -FallRate * 2.2f * Time.deltaTime; //Positive angles
+            else                                    //Negative Angles
+                offsets[0] += FallRate * 2.2f * Time.deltaTime;
         }
         if (transform.rotation.z >= angles[7].z && transform.rotation.z < angles[8].z || transform.rotation.z <= -angles[7].z && transform.rotation.z > -angles[8].z) //80 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.2f;
+            if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
+                offsets[0] += -FallRate * 2.4f * Time.deltaTime; //Positive angles
+            else                                    //Negative Angles
+                offsets[0] += FallRate * 2.4f * Time.deltaTime;
         }
         if (transform.rotation.z >= angles[8].z && transform.rotation.z < angles[9].z || transform.rotation.z <= -angles[8].z && transform.rotation.z > -angles[9].z) //90 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.1f;
+            if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
+                offsets[0] += -FallRate * 2.6f * Time.deltaTime; //Positive angles
+            else                                    //Negative Angles
+                offsets[0] += FallRate * 2.6f * Time.deltaTime;
         }
 
 
-            
+       
+
+
+
 
 
     }

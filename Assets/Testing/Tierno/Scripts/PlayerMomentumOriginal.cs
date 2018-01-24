@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq; //For the count function
 using UnityEngine;
 
-public class PlayerScriptMomentumBased : MonoBehaviour {
+public class PlayerMomentumOriginal : MonoBehaviour
+{
     public float maxspeed; //A maxspeed for the player, allow it to be changed by factors such as terrain type or angle
     public float speed;
     public float RealMaxSpeed;
@@ -12,9 +13,8 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
     private Rigidbody2D rig2d;
     private Animator animy;
     public float FallRate;  //Used to control how fast the player falls down slopes
-    public float SlowDown; //Used to define how the player slows down on flat terrain and on less angled slopes e.t.c
-    //These lot are used to define what the player is touching
-   // public Transform TouchingTerrain;
+                            //These lot are used to define what the player is touching
+                            // public Transform TouchingTerrain;
     public float GroundCheckRadius;
     public LayerMask CollideList; //Temporary, dimension shifting will require lots of these, although I can imagine more blunt ways of doing it
     public Transform TouchingTerrain;
@@ -22,27 +22,28 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
     private float timeLeft;
     private char Direction; //Used to define the direction of the player in human terms
     //public Quaternion[] angles = new Quaternion[] { Quaternion.identity, Quaternion.identity, Quaternion.identity };
-    private Quaternion[] angles;
+    public Quaternion[] angles;
     int bob = 0;  //Placeholder variable used for loops and such
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         rig2d = GetComponent<Rigidbody2D>();  //Enables the RigidBody2d component
         animy = GetComponent<Animator>();   //Allows the animator to work
         CreateLists();
         RealMaxSpeed = maxspeed;
 
     }
-   
+
     public void CreateLists()  //They had to be here because I have no clue what this excuse of a language defines as scope
     {
         angles = new Quaternion[35];  //Creating a list with the angles, more for convinience than having a load of random variable names
-        for(int i=10;i<=350;i+=10)   //Angles goes up in 10 degree intervals, therefore all comparisons must be made within 10 degrees, I guess we could go up in more intervels such as 5 but this works too.
+        for (int i = 10; i <= 350; i += 10)   //Angles goes up in 10 degree intervals, therefore all comparisons must be made within 10 degrees, I guess we could go up in more intervels such as 5 but this works too.
         {
-            angles[bob]=Quaternion.Euler(0, 0, i);
+            angles[bob] = Quaternion.Euler(0, 0, i);
             bob += 1;
         };
         bob = angles.Count();
-                                                           //Add more I guess 
+        //Add more I guess 
     }
     public void MoveTo(Vector2 pos)  //Not actually used, could be useful
     {
@@ -79,55 +80,58 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
 
     void Movement()
     {
-        if(Input.GetKeyDown("a"))   //temporary movement system here, for testing terrain
+        if (Input.GetKeyDown("a"))   //temporary movement system here, for testing terrain
         {
             Direction = 'L';
+            offsets[0] = -RealMaxSpeed;
         }
         else if (Input.GetKeyDown("d"))
         {
             Direction = 'R';
+            offsets[0] = RealMaxSpeed;
         }
         if (Input.GetKeyDown("space"))
         {
             Debug.Log("woooosh");  //Make it do stuff
-            rig2d.MoveRotation(angles[2].eulerAngles.z*-1);
+            rig2d.MoveRotation(angles[2].eulerAngles.z * -1);
         }
-        if(Input.GetKeyUp("a"))
+        if (Input.GetKeyUp("a") && offsets[0] != speed)
         {
+            offsets[0] = 0;
             Direction = 'n';
         }
-        else if(Input.GetKeyUp("d"))
+        else if (Input.GetKeyUp("d") && offsets[0] != -speed)
         {
+            offsets[0] = 0;
             Direction = 'n';     //These are so temporary and just copies, it won't work with what I'm planning
         }
-        if (Direction == 'L'&& offsets[0]+-speed > -RealMaxSpeed)
-            offsets[0] += -speed ;
-        else if (Direction == 'R' && offsets[0] + speed < RealMaxSpeed)
-            offsets[0] += speed ;
-
+        if (Direction == 'L')
+            offsets[0] = -RealMaxSpeed;
+        else if (Direction == 'R')
+            offsets[0] = RealMaxSpeed;
         transform.Translate(offsets[0] * Time.deltaTime, 0, 0);  //Entirely Temporary
-        offsets[1] = -gravitystrength; //PUlls the player down
-        if( onGround != true)
-         transform.Translate(0, offsets[1] * Time.deltaTime, 0);
+        offsets[1] = -gravitystrength;
+        if (onGround != true)
+            transform.Translate(0, offsets[1] * Time.deltaTime, 0);
     }
 
     void Momentum() //Not worth looking at except for reference
     {
-       if (transform.eulerAngles.z==0)   //If on a flat plane, resort to the default main speed
+        if (transform.eulerAngles.z == 0)   //If on a flat plane, resort to the default main speed
         {
-            RealMaxSpeed= maxspeed;
-          //  Debug.Log("Why not?");
+            RealMaxSpeed = maxspeed;
+            //  Debug.Log("Why not?");
         }
-        if(transform.eulerAngles.z==angles[0].eulerAngles.z)   //If on a 10 degree slope, go a bit faster, these numbers are not permenant
+        if (transform.eulerAngles.z == angles[0].eulerAngles.z)   //If on a 10 degree slope, go a bit faster, these numbers are not permenant
         {
-           RealMaxSpeed = maxspeed * 1.1f;
+            RealMaxSpeed = maxspeed * 1.1f;
 
         }
-        else if(transform.eulerAngles.z==angles[1].eulerAngles.z)  //If on a 20 degree slope go faster
+        else if (transform.eulerAngles.z == angles[1].eulerAngles.z)  //If on a 20 degree slope go faster
         {
             RealMaxSpeed = maxspeed * 1.2f;
         }
-        else if(transform.eulerAngles.z==angles[2].eulerAngles.z) //Yada yada yada
+        else if (transform.eulerAngles.z == angles[2].eulerAngles.z) //Yada yada yada
         {
             RealMaxSpeed = maxspeed * 1.3f;
         }
@@ -164,118 +168,100 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
 
         //Max Speed Detection Section
         //If the player is on a plane of less than 10 degrees and more than -10 degrees
-        if (transform.rotation.z<angles[0].z && transform.rotation.z>-angles[0].z)
+        if (transform.rotation.z < angles[0].z && transform.rotation.z > -angles[0].z)
         {
             RealMaxSpeed = maxspeed;
-            //Temporary Values, but this stops the player from moving on flat terrain
-            if (offsets[0] > 0)   
-                if (offsets[0] - SlowDown > 0f)
-                    offsets[0] += -SlowDown;
+            //Temporary Values, but this pulls the 
+            if (offsets[0] > 0)
+                if (offsets[0] - 0.05f > 0f)
+                    offsets[0] += -0.05f;
                 else
                     offsets[0] = 0;
             else
-                if (offsets[0] + SlowDown < 0f)
-                    offsets[0] += SlowDown;
-                else
-                    offsets[0] = 0;
+                if (offsets[0] + 0.05f < 0f)
+                offsets[0] += 0.05f;
+            else
+                offsets[0] = 0;
         }
 
 
         //To break this down nicely, If the player's Z rotation is more than or equal to 10 or more degrees but inbetween that and 20 degrees do as said. 
         //The second section is an OR statement that does the same thing if it's -10 degrees instead. Simples
-        if(transform.rotation.z>=angles[0].z && transform.rotation.z<angles[1].z || transform.rotation.z<=-angles[0].z && transform.rotation.z>-angles[1].z) //10 degrees or more go a bit faster
+        if (transform.rotation.z >= angles[0].z && transform.rotation.z < angles[1].z || transform.rotation.z <= -angles[0].z && transform.rotation.z > -angles[1].z) //10 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.9f;
-            if(0f+transform.rotation.z>0)  //Differentiating from the different possible directions.
-                if(offsets[0]+-FallRate*Time.deltaTime<RealMaxSpeed)
-                    offsets[0] += -FallRate*Time.deltaTime; //Positive angles
+            if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
+                offsets[0] += -FallRate * Time.deltaTime; //Positive angles
             else                                    //Negative Angles
-                if (offsets[0] + FallRate * Time.deltaTime > RealMaxSpeed)
-                    offsets[0] += FallRate * Time.deltaTime;
+                offsets[0] += FallRate * Time.deltaTime;
         }
-        else if (transform.rotation.z >= angles[1].z && transform.rotation.z < angles[2].z || transform.rotation.z <= -angles[1].z && transform.rotation.z > -angles[2].z) //20 degrees or more go a bit faster
+        if (transform.rotation.z >= angles[1].z && transform.rotation.z < angles[2].z || transform.rotation.z <= -angles[1].z && transform.rotation.z > -angles[2].z) //20 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.8f;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
-                if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += -FallRate*1.2f * Time.deltaTime; //Positive angles
+                offsets[0] += -FallRate * 1.2f * Time.deltaTime; //Positive angles
             else                                    //Negative Angles
-                if (offsets[0] + FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += FallRate * 1.2f * Time.deltaTime;
+                offsets[0] += FallRate * 1.2f * Time.deltaTime;
         }
-       else if (transform.rotation.z >= angles[2].z && transform.rotation.z < angles[3].z || transform.rotation.z <= -angles[2].z && transform.rotation.z > -angles[3].z) //30 degrees or more go a bit faster
+        if (transform.rotation.z >= angles[2].z && transform.rotation.z < angles[3].z || transform.rotation.z <= -angles[2].z && transform.rotation.z > -angles[3].z) //30 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.7f;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
-                if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += -FallRate * 1.4f* Time.deltaTime; //Positive angles
+                offsets[0] += -FallRate * 1.4f * Time.deltaTime; //Positive angles
             else                                    //Negative Angles
-                if (offsets[0] + FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += FallRate * 1.4f * Time.deltaTime;
+                offsets[0] += FallRate * 1.4f * Time.deltaTime;
         }
-       else if (transform.rotation.z >= angles[3].z && transform.rotation.z < angles[4].z || transform.rotation.z <= -angles[3].z && transform.rotation.z > -angles[4].z) //40 degrees or more go a bit faster
+        if (transform.rotation.z >= angles[3].z && transform.rotation.z < angles[4].z || transform.rotation.z <= -angles[3].z && transform.rotation.z > -angles[4].z) //40 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.6f;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
-                if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += -FallRate * 1.6f * Time.deltaTime; //Positive angles
+                offsets[0] += -FallRate * 1.6f * Time.deltaTime; //Positive angles
             else                                    //Negative Angles
-                if (offsets[0] + FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += FallRate * 1.6f * Time.deltaTime;
+                offsets[0] += FallRate * 1.6f * Time.deltaTime;
         }
-       else if (transform.rotation.z >= angles[4].z && transform.rotation.z < angles[5].z || transform.rotation.z <= -angles[4].z && transform.rotation.z > -angles[5].z) //50 degrees or more go a bit faster
+        if (transform.rotation.z >= angles[4].z && transform.rotation.z < angles[5].z || transform.rotation.z <= -angles[4].z && transform.rotation.z > -angles[5].z) //50 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.5f;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
-                if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += -FallRate * 1.8f * Time.deltaTime; //Positive angles
+                offsets[0] += -FallRate * 1.8f * Time.deltaTime; //Positive angles
             else                                    //Negative Angles
-                if (offsets[0] + FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += FallRate * 1.8f * Time.deltaTime;
+                offsets[0] += FallRate * 1.8f * Time.deltaTime;
         }
-        else if (transform.rotation.z >= angles[5].z && transform.rotation.z < angles[6].z || transform.rotation.z <= -angles[5].z && transform.rotation.z > -angles[6].z) //60 degrees or more go a bit faster
+        if (transform.rotation.z >= angles[5].z && transform.rotation.z < angles[6].z || transform.rotation.z <= -angles[5].z && transform.rotation.z > -angles[6].z) //60 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.4f;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
-                if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += -FallRate * 2f * Time.deltaTime; //Positive angles
+                offsets[0] += -FallRate * 2f * Time.deltaTime; //Positive angles
             else                                    //Negative Angles
-                if (offsets[0] + FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += FallRate * 2f * Time.deltaTime;
+                offsets[0] += FallRate * 2f * Time.deltaTime;
         }
-       else if (transform.rotation.z >= angles[6].z && transform.rotation.z < angles[7].z || transform.rotation.z <= -angles[6].z && transform.rotation.z > -angles[7].z) //70 degrees or more go a bit faster
+        if (transform.rotation.z >= angles[6].z && transform.rotation.z < angles[7].z || transform.rotation.z <= -angles[6].z && transform.rotation.z > -angles[7].z) //70 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.3f;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
-                if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += -FallRate * 2.2f * Time.deltaTime; //Positive angles
+                offsets[0] += -FallRate * 2.2f * Time.deltaTime; //Positive angles
             else                                    //Negative Angles
-                if (offsets[0] + FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += FallRate * 2.2f * Time.deltaTime;
+                offsets[0] += FallRate * 2.2f * Time.deltaTime;
         }
-      else  if (transform.rotation.z >= angles[7].z && transform.rotation.z < angles[8].z || transform.rotation.z <= -angles[7].z && transform.rotation.z > -angles[8].z) //80 degrees or more go a bit faster
+        if (transform.rotation.z >= angles[7].z && transform.rotation.z < angles[8].z || transform.rotation.z <= -angles[7].z && transform.rotation.z > -angles[8].z) //80 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.2f;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
-                if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += -FallRate * 2.4f * Time.deltaTime; //Positive angles
+                offsets[0] += -FallRate * 2.4f * Time.deltaTime; //Positive angles
             else                                    //Negative Angles
-                if (offsets[0] + FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += FallRate * 2.4f * Time.deltaTime;
+                offsets[0] += FallRate * 2.4f * Time.deltaTime;
         }
-       else if (transform.rotation.z >= angles[8].z && transform.rotation.z < angles[9].z || transform.rotation.z <= -angles[8].z && transform.rotation.z > -angles[9].z) //90 degrees or more go a bit faster
+        if (transform.rotation.z >= angles[8].z && transform.rotation.z < angles[9].z || transform.rotation.z <= -angles[8].z && transform.rotation.z > -angles[9].z) //90 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.1f;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
-                if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += -FallRate * 2.6f * Time.deltaTime; //Positive angles
+                offsets[0] += -FallRate * 2.6f * Time.deltaTime; //Positive angles
             else                                    //Negative Angles
-                if (offsets[0] + FallRate * Time.deltaTime < RealMaxSpeed)
-                    offsets[0] += FallRate * 2.6f * Time.deltaTime;
+                offsets[0] += FallRate * 2.6f * Time.deltaTime;
         }
 
 
-       
+
 
 
 
@@ -283,11 +269,12 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
 
     }
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         Movement();
         Momentum2();
         //Momentum();
-	}
+    }
 
 
     void FixedUpdate()

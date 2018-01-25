@@ -19,21 +19,22 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
     public LayerMask CollideList; //Temporary, dimension shifting will require lots of these, although I can imagine more blunt ways of doing it
     public Transform TouchingTerrain;
     private bool onGround;
+    private bool AffectedByMomentum; //Used to tell if the momentum script is messing with the player
     private float timeLeft;
     private char Direction; //Used to define the direction of the player in human terms
     //public Quaternion[] angles = new Quaternion[] { Quaternion.identity, Quaternion.identity, Quaternion.identity };
     private Quaternion[] angles;
-    int bob = 0;  //Placeholder variable used for loops and such
     // Use this for initialization
     void Start () {
+        int bob = 0;  //Placeholder variable used for loops and such
         rig2d = GetComponent<Rigidbody2D>();  //Enables the RigidBody2d component
         animy = GetComponent<Animator>();   //Allows the animator to work
-        CreateLists();
+        CreateLists(bob);
         RealMaxSpeed = maxspeed;
 
     }
    
-    public void CreateLists()  //They had to be here because I have no clue what this excuse of a language defines as scope
+    public void CreateLists(int bob)  //They had to be here because I have no clue what this excuse of a language defines as scope
     {
         angles = new Quaternion[35];  //Creating a list with the angles, more for convinience than having a load of random variable names
         for(int i=10;i<=350;i+=10)   //Angles goes up in 10 degree intervals, therefore all comparisons must be made within 10 degrees, I guess we could go up in more intervels such as 5 but this works too.
@@ -41,7 +42,6 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
             angles[bob]=Quaternion.Euler(0, 0, i);
             bob += 1;
         };
-        bob = angles.Count();
                                                            //Add more I guess 
     }
     public void MoveTo(Vector2 pos)  //Not actually used, could be useful
@@ -100,10 +100,21 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
         {
             Direction = 'n';     //These are so temporary and just copies, it won't work with what I'm planning
         }
+        //Controls the player's momentum probably should be moved really. Code is very inefficent and memory intensive, but right now I want it to work and don't paticularily care
         if (Direction == 'L'&& offsets[0]+-speed > -RealMaxSpeed)
             offsets[0] += -speed ;
         else if (Direction == 'R' && offsets[0] + speed < RealMaxSpeed)
             offsets[0] += speed ;
+        if (offsets[0] > RealMaxSpeed && Direction == 'N')
+            if (offsets[0] - speed < 0)
+                offsets[0] = 0;
+            else if
+            else
+                offsets[0] -= speed;
+        else if (offsets[0] < RealMaxSpeed&&Direction=='N')
+            offsets[0] += speed;
+
+
 
         transform.Translate(offsets[0] * Time.deltaTime, 0, 0);  //Entirely Temporary
         offsets[1] = -gravitystrength; //PUlls the player down
@@ -186,7 +197,8 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
         if(transform.rotation.z>=angles[0].z && transform.rotation.z<angles[1].z || transform.rotation.z<=-angles[0].z && transform.rotation.z>-angles[1].z) //10 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.9f;
-            if(0f+transform.rotation.z>0)  //Differentiating from the different possible directions.
+            AffectedByMomentum = true;
+            if (0f+transform.rotation.z>0)  //Differentiating from the different possible directions.
                 if(offsets[0]+-FallRate*Time.deltaTime<RealMaxSpeed)
                     offsets[0] += -FallRate*Time.deltaTime; //Positive angles
             else                                    //Negative Angles
@@ -196,6 +208,7 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
         else if (transform.rotation.z >= angles[1].z && transform.rotation.z < angles[2].z || transform.rotation.z <= -angles[1].z && transform.rotation.z > -angles[2].z) //20 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.8f;
+            AffectedByMomentum = true;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
                 if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
                     offsets[0] += -FallRate*1.2f * Time.deltaTime; //Positive angles
@@ -206,6 +219,7 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
        else if (transform.rotation.z >= angles[2].z && transform.rotation.z < angles[3].z || transform.rotation.z <= -angles[2].z && transform.rotation.z > -angles[3].z) //30 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.7f;
+            AffectedByMomentum = true;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
                 if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
                     offsets[0] += -FallRate * 1.4f* Time.deltaTime; //Positive angles
@@ -216,6 +230,7 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
        else if (transform.rotation.z >= angles[3].z && transform.rotation.z < angles[4].z || transform.rotation.z <= -angles[3].z && transform.rotation.z > -angles[4].z) //40 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.6f;
+            AffectedByMomentum = true;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
                 if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
                     offsets[0] += -FallRate * 1.6f * Time.deltaTime; //Positive angles
@@ -226,6 +241,7 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
        else if (transform.rotation.z >= angles[4].z && transform.rotation.z < angles[5].z || transform.rotation.z <= -angles[4].z && transform.rotation.z > -angles[5].z) //50 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.5f;
+            AffectedByMomentum = true;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
                 if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
                     offsets[0] += -FallRate * 1.8f * Time.deltaTime; //Positive angles
@@ -236,6 +252,7 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
         else if (transform.rotation.z >= angles[5].z && transform.rotation.z < angles[6].z || transform.rotation.z <= -angles[5].z && transform.rotation.z > -angles[6].z) //60 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.4f;
+            AffectedByMomentum = true;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
                 if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
                     offsets[0] += -FallRate * 2f * Time.deltaTime; //Positive angles
@@ -246,6 +263,7 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
        else if (transform.rotation.z >= angles[6].z && transform.rotation.z < angles[7].z || transform.rotation.z <= -angles[6].z && transform.rotation.z > -angles[7].z) //70 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.3f;
+            AffectedByMomentum = true;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
                 if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
                     offsets[0] += -FallRate * 2.2f * Time.deltaTime; //Positive angles
@@ -256,6 +274,7 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
       else  if (transform.rotation.z >= angles[7].z && transform.rotation.z < angles[8].z || transform.rotation.z <= -angles[7].z && transform.rotation.z > -angles[8].z) //80 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.2f;
+            AffectedByMomentum = true;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
                 if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
                     offsets[0] += -FallRate * 2.4f * Time.deltaTime; //Positive angles
@@ -266,6 +285,7 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
        else if (transform.rotation.z >= angles[8].z && transform.rotation.z < angles[9].z || transform.rotation.z <= -angles[8].z && transform.rotation.z > -angles[9].z) //90 degrees or more go a bit faster
         {
             RealMaxSpeed = maxspeed * 0.1f;
+            AffectedByMomentum = true;
             if (0f + transform.rotation.z > 0)  //Differentiating from the different possible directions.
                 if (offsets[0] + -FallRate * Time.deltaTime < RealMaxSpeed)
                     offsets[0] += -FallRate * 2.6f * Time.deltaTime; //Positive angles

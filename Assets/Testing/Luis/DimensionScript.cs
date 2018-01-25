@@ -7,30 +7,36 @@ public class DimensionScript : MonoBehaviour
 
     private    Rigidbody2D obst;
     private    BoxCollider2D collide;
-
-    
-
-
-
-
+    public LevelController levelController;
+    public ShiftingController shiftcontrol;
+    public char dimension;
 	// Use this for initialization
 	void Start ()
     {
         collide = GetComponent<BoxCollider2D>();
         obst = GetComponent<Rigidbody2D>();
-	}
-	
-	// Update is called once per frame
-	void Update ()
+        shiftcontrol = FindObjectOfType<ShiftingController>();
+    }
+
+    void resetcollisions()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        this.GetComponent<BoxCollider2D>().enabled = false;
+    }
+    // Update is called once per frame
+    void Update()
+    {
+
+
+        if(shiftcontrol.charDimensionNumber==dimension) // Finished Dimension Shifting code
         {
-            Debug.Log("Hello");
-            GetComponent<BoxCollider2D>().enabled = false;
+            GetComponent<BoxCollider2D>().enabled = true;
         }
         else
+            GetComponent<BoxCollider2D>().enabled = false;
 
-            GetComponent<BoxCollider2D>().enabled = true;
+
+        
+
     }
 
 }

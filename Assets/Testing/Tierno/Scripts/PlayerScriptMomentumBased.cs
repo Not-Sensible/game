@@ -108,7 +108,8 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
         if (offsets[0] > RealMaxSpeed && Direction == 'N')
             if (offsets[0] - speed < 0)
                 offsets[0] = 0;
-            else if
+            //else if
+
             else
                 offsets[0] -= speed;
         else if (offsets[0] < RealMaxSpeed&&Direction=='N')

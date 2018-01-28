@@ -106,11 +106,15 @@ public class PlayerMomentumOriginal : MonoBehaviour
             Direction = 'n';     //These are so temporary and just copies, it won't work with what I'm planning
         }
         if (Direction == 'L')
+        {
             offsets[0] = -RealMaxSpeed;
+        }
         else if (Direction == 'R')
+        {
             offsets[0] = RealMaxSpeed;
-        transform.Translate(offsets[0] * Time.deltaTime, 0, 0);  //Entirely Temporary
-        offsets[1] = -gravitystrength;
+            transform.Translate(offsets[0] * Time.deltaTime, 0, 0);  //Entirely Temporary
+            offsets[1] = -gravitystrength;
+        }
         if (onGround != true)
             transform.Translate(0, offsets[1] * Time.deltaTime, 0);
     }

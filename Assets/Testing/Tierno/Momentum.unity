@@ -2166,7 +2166,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4141129164259416, guid: 7bc03cc3f1b38be42a4211d7590223ca, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -23.64
+      value: -31.55
       objectReference: {fileID: 0}
     - target: {fileID: 4141129164259416, guid: 7bc03cc3f1b38be42a4211d7590223ca, type: 2}
       propertyPath: m_LocalPosition.z
@@ -2375,21 +2375,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 1773514448}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99f39cda678ac834f8c569cb08994f5b, type: 3}
+  m_Script: {fileID: 11500000, guid: cd19f916e80dbe64ca819f8c3c96c48c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxspeed: 15
-  speed: 5
-  RealMaxSpeed: 0
-  gravitystrength: 3
-  offsets: {x: 0, y: 0}
-  FallRate: 10
-  GroundCheckRadius: 0.1
+  maxspeed: 10
+  speed: 10
+  RealMaxspeed: 0
+  GravityStrength: 3
+  X: 0
+  Y: 0
   CollideList:
     serializedVersion: 2
     m_Bits: 256
+  FallRate: 0
+  GroundCheckRadius: 0.1
+  onGround: 0
   TouchingTerrain: {fileID: 105458562}
-  angles: []
 --- !u!4 &1773514453 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4141129164259416, guid: 7bc03cc3f1b38be42a4211d7590223ca,

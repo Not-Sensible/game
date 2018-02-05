@@ -15,6 +15,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
     public float FallRate; //How fast the player will fall down slopes
     public float GroundCheckRadius;
     private char direction;
+    public float slowdown;
     private float timeLeft;
     private Quaternion[] angles;
     public bool onGround;
@@ -97,18 +98,30 @@ public class PlayerMomentumAgain : MonoBehaviour {
 
     }
 
+    void TerrainSlowDown(float slowdownlocal)
+    {
+
+        if (transform.rotation.z > 0)
+            X += -slowdownlocal * Time.deltaTime;
+        else
+            X += slowdownlocal * Time.deltaTime;
+
+        
+
+    }
+
     void Momentum()
     {
-        //0-10 Degrees slowdown if character not moving or running too fast on terrain
+        //If the player is between 10 degrees and -10 degrees
         if (transform.rotation.z < angles[0].z && transform.rotation.z > -angles[0].z)
         {
             RealMaxspeed = maxspeed;
             if (playermoving == true)
             {
-                if (X > RealMaxspeed)
-                    X -= 0.1f;
+                if (X > RealMaxspeed)   //If the player is moving at a speed faster than the maxspeed designated by the terrain, slow them down.
+                    X -= slowdown*Time.deltaTime;
                 else if(X<-RealMaxspeed)
-                    X += 0.1f;
+                    X += slowdown*Time.deltaTime;
 
             }
             else if (playermoving!=true)
@@ -117,7 +130,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
                     {
                         if (X - 0.1f > 0f)
                         {
-                            X += -0.1f;
+                            X += -slowdown*Time.deltaTime;
                         }
                         else
                             X = 0;
@@ -126,7 +139,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
                     {
                         if (X + 0.1f < 0f)
                         {
-                            X += 0.f;
+                            X += slowdown* Time.deltaTime;
                         }
                         else
                             X = 0;
@@ -134,6 +147,35 @@ public class PlayerMomentumAgain : MonoBehaviour {
                 
             }
 
+        
+
+
+        }
+
+        //Behaviours for all the different angles go here.
+        if(transform.rotation.z>=angles[0].z && transform.rotation.z <=angles[1].z || transform.rotation.z <= -angles[0].z && transform.rotation.z >= -angles[1].z)
+        {
+            TerrainSlowDown(slowdown * 1.1f);
+
+        }
+        else if (transform.rotation.z >= angles[1].z && transform.rotation.z <= angles[2].z || transform.rotation.z <= -angles[0].z && transform.rotation.z >= -angles[1].z)
+        {
+            TerrainSlowDown(slowdown * 1.2f);
+
+        }
+        else if (transform.rotation.z >= angles[2].z && transform.rotation.z <= angles[3].z || transform.rotation.z <= -angles[1].z && transform.rotation.z >= -angles[2].z)
+        {
+            TerrainSlowDown(slowdown * 1.3f);
+
+        }
+        else if (transform.rotation.z >= angles[3].z && transform.rotation.z <= angles[4].z || transform.rotation.z <= -angles[2].z && transform.rotation.z >= -angles[3].z)
+        {
+            TerrainSlowDown(slowdown * 1.4f);
+
+        }
+        else if (transform.rotation.z >= angles[4].z && transform.rotation.z <= angles[5].z || transform.rotation.z >= -angles[3].z && transform.rotation.z <= -angles[4].z)
+        {
+            TerrainSlowDown(slowdown * 1.5f);
 
         }
     }

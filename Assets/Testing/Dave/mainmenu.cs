@@ -32,15 +32,20 @@ public class mainmenu : MonoBehaviour {
         {
             SceneManager.LoadScene(1);
         }
-        if (GUI.Button(new Rect(Screen.width * newGameX, Screen.height * newGameY, Screen.width * .25f, Screen.height * .075f), "New Game", levelSelect))
+        if (GUI.Button(new Rect(Screen.width * newGameX, Screen.height * newGameY, Screen.width * .25f, Screen.height * .075f), "New Game", newGame))
         {
 
         }
-        if (GUI.Button(new Rect(Screen.width * optionsX, Screen.height * optionsY, Screen.width * .25f, Screen.height * .075f), "Options", levelSelect))
+        if (GUI.Button(new Rect(Screen.width * optionsX, Screen.height * optionsY, Screen.width * .25f, Screen.height * .075f), "Options", options))
         {
 
         }
-        if (GUI.Button(new Rect(Screen.width * quitX, Screen.height * quitY, Screen.width * .25f, Screen.height * .075f), "Quit", levelSelect))
+        if(GUI.Button(new Rect(Screen.width * creditsX, Screen.height * creditsY, Screen.width * .25f, Screen.height * .075f), "Credits", credits))
+        {
+
+        }
+
+        if (GUI.Button(new Rect(Screen.width * quitX, Screen.height * quitY, Screen.width * .25f, Screen.height * .075f), "Quit", quit))
         {
             Application.Quit();
         }

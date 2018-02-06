@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Testing/Dave/MainMenu.unity
+- path: Assets/Testing/Dave/LevelSelect.unity
   isLoaded: 1
   isActive: 1

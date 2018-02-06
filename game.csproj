@@ -290,9 +290,11 @@
     <Compile Include="Assets\Scripts\LevelController.cs" />
     <Compile Include="Assets\Scripts\Player_Script.cs" />
     <Compile Include="Assets\Scripts\Player_Script2.cs" />
+    <Compile Include="Assets\Testing\Dave\levelSelect.cs" />
     <Compile Include="Assets\Testing\Dave\mainmenu.cs" />
     <Compile Include="Assets\Testing\Luis\DimensionScript.cs" />
     <Compile Include="Assets\Testing\Luis\ShiftingController.cs" />
+    <Compile Include="Assets\Testing\Tierno\Scripts\PlayerMomentumAgain.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\PlayerMomentumOriginal.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\PlayerScriptMomentumBased.cs" />
   </ItemGroup>

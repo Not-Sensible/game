@@ -29,25 +29,25 @@ public class levelSelect : MonoBehaviour {
     void OnGUI() { 
     GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), background);
 
-        if(GUI.Button(new Rect(Screen.width* level1X, Screen.height* level1Y, Screen.width* .20f, Screen.height* .20f), "Level1", level1))
+        if(GUI.Button(new Rect(Screen.width* level1X, Screen.height* level1Y, Screen.width* .235f, Screen.height* .2337f), "Level1", level1))
         {
           
             SceneManager.LoadScene("Actual_level");
             Debug.Log("working");
         }
-        if (GUI.Button(new Rect(Screen.width* level2X, Screen.height* level2Y, Screen.width* .20f, Screen.height* .20f), "Level2", level2))
+        if (GUI.Button(new Rect(Screen.width* level2X, Screen.height* level2Y, Screen.width * .235f, Screen.height * .2337f), "Level2", level2))
         {
             //SceneManager.LoadScene("Actual_level");
         }
-        if (GUI.Button(new Rect(Screen.width* level3X, Screen.height* level3Y, Screen.width* .20f, Screen.height* .20f), "Level3", level3))
+        if (GUI.Button(new Rect(Screen.width* level3X, Screen.height* level3Y, Screen.width * .235f, Screen.height * .2337f), "Level3", level3))
         {
             //SceneManager.LoadScene("Actual_level");
         }
-        if (GUI.Button(new Rect(Screen.width* level4X, Screen.height* level4Y, Screen.width* .20f, Screen.height* .075f), "Level4", level4))
+        if (GUI.Button(new Rect(Screen.width* level4X, Screen.height* level4Y, Screen.width * .235f, Screen.height * .2337f), "Level4", level4))
         {
             //SceneManager.LoadScene("Actual_level");
         }
-        if (GUI.Button(new Rect(Screen.width * level5X, Screen.height * level5Y, Screen.width * .20f, Screen.height * .075f), "Level5", level5))
+        if (GUI.Button(new Rect(Screen.width * level5X, Screen.height * level5Y, Screen.width * .235f, Screen.height * .2337f), "Level5", level5))
         {
             //SceneManager.LoadScene("Actual_level");
         }

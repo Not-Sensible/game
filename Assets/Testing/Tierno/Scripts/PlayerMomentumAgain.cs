@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Diagnostics;
 public class PlayerMomentumAgain : MonoBehaviour {
     public float maxspeed; //The plain default maxspeed on normal terrain
     public float speed;
@@ -22,13 +22,39 @@ public class PlayerMomentumAgain : MonoBehaviour {
     public bool onGround;
     public Transform TouchingTerrain;
     int bob = 0;
+    System.TimeSpan ts;
+    int elapsedtime;
+    Stopwatch stopwatch = new Stopwatch();
     // Use this for initialization
     void Start() {
         rig2d = GetComponent<Rigidbody2D>();  //Enables the RigidBody2d component
         animy = GetComponent<Animator>();   //Allows the animator to work
         CreateLists();
         RealMaxspeed = maxspeed;
+        stopwatch.Start();
+        
     }
+    void OnDrawGizmosSelected() //Just used to draw the path of the ray for debugging reasons, could be used for other stuff if you want. IF SOMEONE ELSE ACTUALLY LOOKED AT THIS THAT IS >:( anger
+    {
+        Gizmos.color = Color.red;
+        Vector3 direction = transform.TransformDirection(Vector2.down) * 15;
+        Gizmos.DrawRay(transform.position, direction);
+    }
+    private void Raycasting()  //This script is being used to test the terrain beneath the player and translate the player to the angle beneath them, preventing issues with terrain.
+    {
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x,TouchingTerrain.position.y), Vector2.down*15);  //Defining the ray and its path, Trying to offset the ray in testing as it gets stuck in the player object
+        UnityEngine.Debug.Log(ray.transform.gameObject.transform.rotation.z);
+        if (ray)  //If true do this
+            transform.rotation = ray.transform.gameObject.transform.rotation; //Sets the player's angle to the terrain
+        
+    }
+
+    /*✋✋✋✋✋hol' up hol' up ✋✋ looks 👀 like we got a master 🎓 memer 🐸🐸🐸 over here 👈👈👈👩👩 hold on to your 👙panties👙ladies!💋💁fuccbois better back the hell ⬆️up⬆️ this absolute 🙀🙀🙀 maaaaaadman!!1! 👹 all you other aspiring 🌽🌽 memers👽👻💀 mmmight as wwwell give up! 👎👎👎👎cuse 👉this guy👈is as good 👌👌👌as it gets! 👏👏👏😹😹
+
+OMG 😱😱😱 BRO👬 CALM 😴😴 DOWN BRO ⬇️⬇️ SIMMER ☕️☕️ DOWN⬇️⬇️ U WANNA KNOW Y⁉️ BC 💁💁 IT WAS JUST A PRANK 😂😂😂 😛😜 HAHAHA GOT U 👌👌 U FUKIN RETARD 😂😁😁THERE'S A CAMERA 📹📷 RIGHT OVER 👈👇👆☝️ THERE 📍U FAGOT 👨‍❤️‍💋‍👨👨‍❤️‍💋‍👨👐WE 👨‍👨‍👦 GOT U BRO👬. I BET U DIDNT 🙅🙅NOE 💆HOW 2⃣ REACT WHEN MY 🙋 BRO DESMOND 😎😎 CAME UP ⬆️ TO U AND 💦💦😫😫 JIZZED ALL OVER UR 👖👖 SWEET JEANS 😂😂 IT WAS SO FUNNY 😂😛😀😀😅 NOW U HAVE 🙋👅👅 SUM BABY👶👶 GRAVY 💦🍲 ALL OVER THEM SHITS😵😵
+
+Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes 👄💦😩 to visit you 👣👟and give 👍🏼 you a package 🙈📦💌💦. Hope you were a 😇🙂 good girl 😛🍆 this year instead of the😽 usual 😼 naughty 🙄 girl 💦🍑👅😛😫🔥🔥. Santa is definitely ✊🏻 coming 💧tonight 🎅🏿🎅🏻😳😏 and he's gonna 😍😘 stuff your stocking 😝👌🏽👈🏽 with goodies 💋💄👙👗 tonight on this 🎄Christmas 🎄night ❄️⛄️☃🌨💫. Santa 🎅🏻 is gonna 💪🏿💪🏼✊🏻squeeze 🖖🏻down your 👧🏽 😰 narrow 😛😍chimney 🏡🏠 and show you 👀 that you've been a very👸🏽👸🏽 naughty 😏😫😝 girl. Then his 💁🏼 helper 😬😏 Boy 🍆🙃🙂 is gonna 🎄sleigh you baby 😛😏😲👐🏼🙌🏻 and inspect 🕵🔎🔍 that 🍑 sweet 💦 ass🍑 because that's what 👉🏽you👈🏽 want for Christmas 🍑💦😛🔥😏😍🍆👅👀 Santa 🎅🏻 is cumin😻👽 to town 🏢🏦🏬🏚🏡🏠🏣🏤 the clock 🕐 is ticking 🙄 be ready 😏😛🍆 Santa is cumin down↘️⬇️↙️ your👌🏽😍 chimney🖖🏻👅 tonight 😮and he's gonna 😨drown in that chimney 🤐😰💦💧☔️🏊🏼🏄🏼🚣🏼 of yours 🛀🏼🍆🍑 SLEIGH 🎄🎄 🎅🏻SANTA🎅🏻 🎄🎄 SLEIGH 🍆😩💦👩‍❤️‍💋‍👩
+    */
     public void CreateLists()  //They had to be here because I have no clue what this excuse of a language defines as scope
     {
         angles = new Quaternion[35];  //Creating a list with the angles, more for convinience than having a load of random variable names
@@ -40,32 +66,36 @@ public class PlayerMomentumAgain : MonoBehaviour {
         //Add more I guess 
     }
 
+    public void clock()   //Clock system for the character, can be used for anything. //But doesn't actually work
+    {
+        System.TimeSpan ts = stopwatch.Elapsed;
+        int elapsedtime = ts.Seconds;
+    }
     void checks() //Clock is here, pretty useless really, should be reliant on something else.
     {
         onGround = Physics2D.OverlapCircle(TouchingTerrain.position, GroundCheckRadius, CollideList); //Code to work out if the player is on terrain or not
-        if (timeLeft > 0f)
+        if (onGround != true)
         {
-            clock();
+            stopwatch.Start();
+            System.TimeSpan ts = stopwatch.Elapsed;
+            int elapsedtime = ts.Seconds;
+           // UnityEngine.Debug.Log(elapsedtime);
+            if (elapsedtime == 5)
+            {
+                Raycasting();
+                stopwatch.Reset();
+                elapsedtime = 0;
+            }
 
-        }
-        else if (timeLeft < 0f)       //adjust much later
-            Y = 0;
-    }
-
-    bool clock()   //Clock system for the character, can be used for anything.
-    {
-        timeLeft -= Time.deltaTime;
-        if (timeLeft < 0)
-        {
-            return false;
         }
         else
-        {
-            return true;
-        }
+            stopwatch.Reset();
+              
 
+            
 
     }
+
 
     void InputScript()
     {
@@ -221,8 +251,6 @@ public class PlayerMomentumAgain : MonoBehaviour {
 
 
 
-
-
     // Update is called once per frame
     void Update () {
         InputScript();
@@ -230,6 +258,8 @@ public class PlayerMomentumAgain : MonoBehaviour {
 	}
     void FixedUpdate()
     {
+        //UnityEngine.Debug.Log(elapsedtime);
+            
         checks();
     }
 }

@@ -1,4 +1,0 @@
-sceneSetups:
-- path: Assets/Testing/Dave/LevelSelect.unity
-  isLoaded: 1
-  isActive: 1

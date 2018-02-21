@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Camera_Script : MonoBehaviour {
-    private Player_Script2 player;  //Accesses the player script
+    private PlayerMomentumAgain player;  //Accesses the player script
     public GameObject FollowThis;
+    public float camerapostion;
 	// Use this for initialization
 	void Start () {
-        player = FindObjectOfType<Player_Script2>();
+        player = FindObjectOfType<PlayerMomentumAgain>();
 	}
 
     public void FollowNewObject(GameObject obj)
@@ -17,6 +18,6 @@ public class Camera_Script : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        transform.position = new Vector3(FollowThis.transform.position.x, FollowThis.transform.position.y, -20);
+        transform.position = new Vector3(FollowThis.transform.position.x, FollowThis.transform.position.y,camerapostion );
 	}
 }

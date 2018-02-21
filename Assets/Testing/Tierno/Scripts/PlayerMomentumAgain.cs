@@ -8,6 +8,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
     public float RealMaxspeed; //The Maxspeed changed by terrain and angles and state
     public float GravityStrength;
     public float X, Y; //X and Y of the player
+    public TerrainObject Block;
     private Rigidbody2D rig2d;
     private Animator animy;
     private bool playermoving;
@@ -29,6 +30,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
     void Start() {
         rig2d = GetComponent<Rigidbody2D>();  //Enables the RigidBody2d component
         animy = GetComponent<Animator>();   //Allows the animator to work
+        Block = FindObjectOfType<TerrainObject>();
         CreateLists();
         RealMaxspeed = maxspeed;
         stopwatch.Start();
@@ -37,15 +39,34 @@ public class PlayerMomentumAgain : MonoBehaviour {
     void OnDrawGizmosSelected() //Just used to draw the path of the ray for debugging reasons, could be used for other stuff if you want. IF SOMEONE ELSE ACTUALLY LOOKED AT THIS THAT IS >:( anger
     {
         Gizmos.color = Color.red;
-        Vector3 direction = transform.TransformDirection(Vector2.down) * 15;
-        Gizmos.DrawRay(transform.position, direction);
+        Vector3 direction = TouchingTerrain.TransformDirection(Vector2.down) * 15;
+        Gizmos.DrawRay(TouchingTerrain.position, direction);
     }
-    private void Raycasting()  //This script is being used to test the terrain beneath the player and translate the player to the angle beneath them, preventing issues with terrain.
+    private void RaycastingTerrain()  //This script is being used to test the terrain beneath the player and translate the player to the angle beneath them, preventing issues with terrain.
     {
         RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x,TouchingTerrain.position.y), Vector2.down*15);  //Defining the ray and its path, Trying to offset the ray in testing as it gets stuck in the player object
         UnityEngine.Debug.Log(ray.transform.gameObject.transform.rotation.z);
-        if (ray)  //If true do this
+        if (ray == true && ray.transform.gameObject.tag == "block")  //If true do this
             transform.rotation = ray.transform.gameObject.transform.rotation; //Sets the player's angle to the terrain
+        else
+            transform.rotation= Quaternion.Euler(0,0,0);
+        
+    }
+
+    bool RayCastCheck()
+    {
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y),Vector2.down*15);
+        if (ray == true)
+        {
+            float temp = ray.transform.gameObject.transform.rotation.eulerAngles.z;
+            // if (temp-transform.rotation.z<0 && temp-transform.rotation.z>5 || temp-)
+            transform.rotation = ray.transform.gameObject.transform.rotation;
+            return (true);
+        }
+        else if(ray == false)
+          UnityEngine.Debug.Log("OII");
+
+        return false;
         
     }
 
@@ -80,9 +101,9 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
             System.TimeSpan ts = stopwatch.Elapsed;
             int elapsedtime = ts.Seconds;
            // UnityEngine.Debug.Log(elapsedtime);
-            if (elapsedtime == 5)
+            if (elapsedtime == 2)
             {
-                Raycasting();
+                RaycastingTerrain();
                 stopwatch.Reset();
                 elapsedtime = 0;
             }
@@ -90,7 +111,13 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
         }
         else
             stopwatch.Reset();
-              
+        RayCastCheck();
+        if(onGround==true && RayCastCheck()==true)
+        {
+
+        }
+        //TouchingTerrain.rotation = transform.rotation;
+        
 
             
 
@@ -259,7 +286,6 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     void FixedUpdate()
     {
         //UnityEngine.Debug.Log(elapsedtime);
-            
         checks();
     }
 }

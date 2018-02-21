@@ -6,7 +6,7 @@ public class TerrainObject : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+        tag = "block";
 	}
 	
 	// Update is called once per frame

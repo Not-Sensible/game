@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 public class mainmenu : MonoBehaviour {
 
     public Texture background;
@@ -10,6 +12,10 @@ public class mainmenu : MonoBehaviour {
     public GUIStyle options;
     public GUIStyle credits;
     public GUIStyle quit;
+
+    public GUIStyle levelSelectNew;
+    public GUIStyle newGameNew;
+    public GUIStyle optionsNea;
 
     public float levelSelectY;
     public float newGameY;
@@ -23,6 +29,24 @@ public class mainmenu : MonoBehaviour {
     public float creditsX;
     public float quitX;
 
+    private Button pb;
+    
+    void start()
+    {
+        pb = GetComponent<Button>();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData, Sprite newSprite)
+    {
+        pb.image.sprite = newSprite;
+        Debug.Log("Enter");
+    }
+
+    public void OnPointerExit (PointerEventData eventData, GUIStyle image)
+    {
+        pb.image.sprite = image;
+        Debug.Log("Exit");
+    }
 
     void OnGUI()
     {
@@ -31,18 +55,19 @@ public class mainmenu : MonoBehaviour {
         if(GUI.Button(new Rect(Screen.width * levelSelectX, Screen.height * levelSelectY, Screen.width * .25f, Screen.height * .075f), "Level Select", levelSelect))
         {
             SceneManager.LoadScene(1);
+            OnPointerEnter(OnPointerEnter, levelSelectNew);
         }
         if (GUI.Button(new Rect(Screen.width * newGameX, Screen.height * newGameY, Screen.width * .25f, Screen.height * .075f), "New Game", newGame))
         {
-
+            //SceneManager.LoadScene();
         }
         if (GUI.Button(new Rect(Screen.width * optionsX, Screen.height * optionsY, Screen.width * .25f, Screen.height * .075f), "Options", options))
         {
-
+            //SceneManager.LoadScene();
         }
         if(GUI.Button(new Rect(Screen.width * creditsX, Screen.height * creditsY, Screen.width * .25f, Screen.height * .075f), "Credits", credits))
         {
-
+            //SceneManager.LoadScene();
         }
 
         if (GUI.Button(new Rect(Screen.width * quitX, Screen.height * quitY, Screen.width * .25f, Screen.height * .075f), "Quit", quit))

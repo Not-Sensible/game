@@ -13,7 +13,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
     private Animator animy;
     private bool playermoving;
     public LayerMask CollideList; //Temporary, dimension shifting will require lots of these, although I can imagine more blunt ways of doing it
-    private float groundslide = 12;
+    private float groundslide = 15;
     public float GroundCheckRadius;
     private char direction; //Actual direction of the player
     private char DesiredDir; //The desired direction
@@ -45,7 +45,6 @@ public class PlayerMomentumAgain : MonoBehaviour {
     private void RaycastingTerrain()  //This script is being used to test the terrain beneath the player and translate the player to the angle beneath them, preventing issues with terrain.
     {
         RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x,TouchingTerrain.position.y), Vector2.down*15);  //Defining the ray and its path, Trying to offset the ray in testing as it gets stuck in the player object
-        UnityEngine.Debug.Log(ray.transform.gameObject.transform.rotation.z);
         if (ray == true && ray.transform.gameObject.tag == "block")  //If true do this
             transform.rotation = ray.transform.gameObject.transform.rotation; //Sets the player's angle to the terrain
         else
@@ -53,18 +52,16 @@ public class PlayerMomentumAgain : MonoBehaviour {
         
     }
 
-    bool RayCastCheck()
-    {
-        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y),Vector2.down*15);
-        if (ray == true)
+    bool RayCastCheck()   //This is used to check if the player is on the same angle as the terrain directly beneath them
+    {   //The Rest of the function is the same as the raycast check above
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15);
+        if (ray == true && ray.transform.gameObject.transform.tag=="block")
         {
             float temp = ray.transform.gameObject.transform.rotation.eulerAngles.z;
             // if (temp-transform.rotation.z<0 && temp-transform.rotation.z>5 || temp-)
             transform.rotation = ray.transform.gameObject.transform.rotation;
             return (true);
         }
-        else if(ray == false)
-          UnityEngine.Debug.Log("OII");
 
         return false;
         
@@ -178,7 +175,54 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
 
 
     }
+    void SlowdownFunctionThingy()
+    {
+        if (onGround == true)
+        {
+            if (DesiredDir == 'R' && X < 0 || DesiredDir == 'L' && X > 0)
+            {
+                playermoving = false;
+            }
+            if (transform.rotation.z < angles[1].z && transform.rotation.z > -angles[1].z)
+            {
+                RealMaxspeed = maxspeed;
+                if (playermoving == true)
+                {
+                    if (X > RealMaxspeed)   //If the player is moving at a speed faster than the maxspeed designated by the terrain, slow them down.
+                        X -= groundslide * Time.deltaTime;
+                    else if (X < -RealMaxspeed)
+                        X += groundslide * Time.deltaTime;
 
+                }
+                else if (playermoving != true)
+                {
+                    if (X > 0)
+                    {
+                        if (X - 0.1f > 0f)
+                        {
+                            X += -groundslide * Time.deltaTime;
+                        }
+                        else
+                            X = 0;
+                    }
+                    else
+                    {
+                        if (X + 0.1f < 0f)
+                        {
+                            X += groundslide * Time.deltaTime;
+                        }
+                        else
+                            X = 0;
+                    }
+
+                }
+
+
+
+
+            }
+        }
+        }
     void Momentum()
     {
         //If the player is between 10 degrees and -10 degrees
@@ -226,16 +270,23 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
 
 
             }
-
+            UnityEngine.Debug.Log(angles[1].eulerAngles.z);
             //Behaviours for all the different angles go here.
             if (transform.rotation.z >= angles[0].z && transform.rotation.z <= angles[1].z || transform.rotation.z <= -angles[0].z && transform.rotation.z >= -angles[1].z) //10 degrees
             {
-                TerrainSlowDown(slowdown * 1.1f);
+                    if (playermoving == true)
+                        TerrainSlowDown(slowdown * 1.1f);
+                    else
+                        SlowdownFunctionThingy();
+
 
             }
             else if (transform.rotation.z >= angles[1].z && transform.rotation.z <= angles[2].z || transform.rotation.z <= -angles[0].z && transform.rotation.z >= -angles[1].z) //20
             {
-                TerrainSlowDown(slowdown * 1.2f);
+                if (playermoving == true)
+                    TerrainSlowDown(slowdown * 1.1f);
+                else
+                    SlowdownFunctionThingy();
 
             }
             else if (transform.rotation.z >= angles[2].z && transform.rotation.z <= angles[3].z || transform.rotation.z <= -angles[1].z && transform.rotation.z >= -angles[2].z) //30

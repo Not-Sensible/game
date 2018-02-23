@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Camera_Script : MonoBehaviour {
-    private PlayerMomentumAgain player;  //Accesses the player script
+    private PlayerMomentumAgain PlayerCharacter;  //Accesses the player script
     public GameObject FollowThis;
     public float camerapostion;
 	// Use this for initialization
 	void Start () {
-        player = FindObjectOfType<PlayerMomentumAgain>();
+        PlayerCharacter = FindObjectOfType<PlayerMomentumAgain>();
 	}
 
     public void FollowNewObject(GameObject obj)

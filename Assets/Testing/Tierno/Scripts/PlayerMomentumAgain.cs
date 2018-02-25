@@ -13,15 +13,18 @@ public class PlayerMomentumAgain : MonoBehaviour {
     private Animator animy;
     private bool playermoving;
     public LayerMask CollideList; //Temporary, dimension shifting will require lots of these, although I can imagine more blunt ways of doing it
-    private float groundslide = 15;
+    private float groundslide = 20;
     public float GroundCheckRadius;
     private char direction; //Actual direction of the player
     private char DesiredDir; //The desired direction
     public float slowdown;
     private float timeLeft;
+    private float tempangle;
     private Quaternion[] angles;
     public bool onGround;
     public Transform TouchingTerrain;
+    public Transform TerrainRight;
+    public Transform TerrainLeft;
     int bob = 0;
     System.TimeSpan ts;
     int elapsedtime;
@@ -51,7 +54,15 @@ public class PlayerMomentumAgain : MonoBehaviour {
             transform.rotation= Quaternion.Euler(0,0,0);
         
     }
-
+    private GameObject raycastreturn()
+    {
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15);
+        if (ray == true && ray.transform.gameObject.transform.tag == "block")
+        {
+            return ray.transform.gameObject;
+        }
+        return ray.transform.gameObject;
+    }
     bool RayCastCheck()   //This is used to check if the player is on the same angle as the terrain directly beneath them
     {   //The Rest of the function is the same as the raycast check above
         RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15);
@@ -76,7 +87,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     public void CreateLists()  //They had to be here because I have no clue what this excuse of a language defines as scope
     {
         angles = new Quaternion[35];  //Creating a list with the angles, more for convinience than having a load of random variable names
-        for (int i = 10; i <= 350; i += 10)   //Angles goes up in 10 degree intervals, therefore all comparisons must be made within 10 degrees, I guess we could go up in more intervels such as 5 but this works too.
+        for (float i = 10.0f; i <= 350; i += 10.0f)   //Angles goes up in 10 degree intervals, therefore all comparisons must be made within 10 degrees, I guess we could go up in more intervels such as 5 but this works too.
         {
             angles[bob] = Quaternion.Euler(0, 0, i);
             bob += 1;
@@ -223,9 +234,9 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
             }
         }
         }
-    void Momentum()
+
+    void NEWNEWMOMENTUM()
     {
-        //If the player is between 10 degrees and -10 degrees
         if (onGround == true)
         {
             if (DesiredDir == 'R' && X < 0 || DesiredDir == 'L' && X > 0)
@@ -270,9 +281,225 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
 
 
             }
-            UnityEngine.Debug.Log(angles[1].eulerAngles.z);
+        }
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15);
+
+        if (ray == true && ray.transform.gameObject.transform.tag == "block")
+        {
+            float temp = 340;
+            for (float i = 10; i < 100; i += 10)
+            {
+                if (ray.transform.gameObject.transform.rotation.eulerAngles.z >= i && ray.transform.gameObject.transform.rotation.eulerAngles.z < i + 10)
+
+                {
+                    TerrainSlowDown(slowdown * (1 + (i / 100)));
+                }
+                else if (ray.transform.gameObject.transform.rotation.eulerAngles.z < 360 && ray.transform.gameObject.transform.rotation.eulerAngles.z > 270)
+                {
+                    if (ray.transform.gameObject.transform.rotation.eulerAngles.z <= i + temp && ray.transform.gameObject.transform.rotation.eulerAngles.z >= i + temp)
+                    {
+                        TerrainSlowDown(slowdown * (1 + (i / 100)));
+                    }
+
+                    temp -= 20;
+                }
+            }
+        }
+       /* if (transform.rotation.eulerAngles.z >= 300.0f && transform.rotation.eulerAngles.z < 290.0f)
+        {
+            tempangle = -60.0f;
+        }
+        else if (transform.rotation.eulerAngles.z >= 60.0f && transform.rotation.eulerAngles.z < 70.0f)
+        {
+            UnityEngine.Debug.Log("hey babe");
+            tempangle = 60.0f;
+        }
+
+        // if (transform.rotation.eulerAngles.z != tempangle && tempangle!=230.0f)
+        // {
+        //   transform.rotation = Quaternion.Euler(0, 0, 270.0f);
+        //   if(raycastreturn().transform.rotation.eulerAngles.z==270.0f)
+        //       tempangle = 230.0f;
+        //  }
+        /*if (transform.rotation.eulerAngles.z != tempangle && tempangle != 230.0f)
+        {
+            if (tempangle <= 300.0f)
+            {
+                transform.rotation = Quaternion.Euler(0, 0, 270.0f);
+                if (raycastreturn().transform.rotation.eulerAngles.z == 270.0f)
+                    tempangle = 230.0f;
+            }
+            else if (tempangle == 60.0f)
+            {
+                transform.rotation = Quaternion.Euler(0, 0, 90.0f);
+                if (raycastreturn().transform.rotation.eulerAngles.z == 90.0f)
+                    tempangle = 230.0f;
+            }
+        }*/ 
+    }
+    void NewMomentum()
+    {
+        if (onGround == true)
+        {
+            if (DesiredDir == 'R' && X < 0 || DesiredDir == 'L' && X > 0)
+            {
+                playermoving = false;
+            }
+            if (transform.rotation.z < angles[0].z && transform.rotation.z > -angles[0].z)
+            {
+                RealMaxspeed = maxspeed;
+                if (playermoving == true)
+                {
+                    if (X > RealMaxspeed)   //If the player is moving at a speed faster than the maxspeed designated by the terrain, slow them down.
+                        X -= groundslide * Time.deltaTime;
+                    else if (X < -RealMaxspeed)
+                        X += groundslide * Time.deltaTime;
+
+                }
+                else if (playermoving != true)
+                {
+                    if (X > 0)
+                    {
+                        if (X - 0.1f > 0f)
+                        {
+                            X += -groundslide * Time.deltaTime;
+                        }
+                        else
+                            X = 0;
+                    }
+                    else
+                    {
+                        if (X + 0.1f < 0f)
+                        {
+                            X += groundslide * Time.deltaTime;
+                        }
+                        else
+                            X = 0;
+                    }
+
+                }
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+        }
+        if (transform.rotation.z >= angles[0].z && transform.rotation.z < angles[1].z || transform.rotation.z <= -angles[0].z && transform.rotation.z >-angles[1].z) //10 degrees
+        {
+            if (playermoving == true)
+                TerrainSlowDown(slowdown * 1.1f);
+            else
+                SlowdownFunctionThingy();
+
+
+        }
+        else if (transform.rotation.z > Quaternion.Euler(0, 0, 15.0f).z && transform.rotation.z < Quaternion.Euler(0,0,29.0f).z || transform.rotation.z <= -angles[1].z && transform.rotation.z >= -angles[2].z) //20
+        {
+            TerrainSlowDown(slowdown * 1.2f);
+
+        }
+        else if (transform.rotation.z >= angles[3].z && transform.rotation.z <= angles[4].z || transform.rotation.z <= -angles[3].z && transform.rotation.z >= -angles[4].z) //30
+        {
+            TerrainSlowDown(slowdown * 1.3f);
+
+        }
+        else if (transform.rotation.z >= angles[4].z && transform.rotation.z <= angles[5].z || transform.rotation.z <= -angles[4].z && transform.rotation.z >= -angles[5].z) //40
+        {
+            TerrainSlowDown(slowdown * 1.4f);
+
+        }
+        else if (transform.rotation.z >= angles[5].z && transform.rotation.z <= angles[6].z || transform.rotation.z <= -angles[5].z && transform.rotation.z >= -angles[6].z) //50
+        {
+            TerrainSlowDown(slowdown * 1.5f);
+
+        }
+        else if (transform.rotation.z >= angles[6].z && transform.rotation.z <= angles[7].z || transform.rotation.z <= -angles[6].z && transform.rotation.z >= -angles[7].z) //60
+        {
+            TerrainSlowDown(slowdown * 1.6f);
+
+        }
+        else if (transform.rotation.z >= angles[7].z && transform.rotation.z <= angles[8].z || transform.rotation.z <= -angles[7].z && transform.rotation.z >= -angles[8].z) //70
+        {
+            TerrainSlowDown(slowdown * 1.7f);
+
+        }
+        else if (transform.rotation.z >= angles[8].z && transform.rotation.z <= angles[9].z || transform.rotation.z <= -angles[8].z && transform.rotation.z >= -angles[9].z) //80
+        {
+            TerrainSlowDown(slowdown * 1.8f);
+
+        }
+        else if (transform.rotation.z >= angles[9].z && transform.rotation.z <= angles[10].z || transform.rotation.z <= -angles[9].z && transform.rotation.z >= -angles[10].z) //90
+        {
+            TerrainSlowDown(slowdown * 1.9f);
+
+        }
+
+
+
+
+    }
+
+
+
+
+    void Momentum()
+    {
+        //If the player is between 10 degrees and -10 degrees
+        if (onGround == true)
+        {
+            if (DesiredDir == 'R' && X < 0 || DesiredDir == 'L' && X > 0)
+            {
+                playermoving = false;
+            }
+            if (transform.rotation.z < angles[1].z && transform.rotation.z > -angles[1].z)
+            {
+                RealMaxspeed = maxspeed;
+                if (playermoving == true)
+                {
+                    if (X > RealMaxspeed)   //If the player is moving at a speed faster than the maxspeed designated by the terrain, slow them down.
+                        X -= groundslide * Time.deltaTime;
+                    else if (X < -RealMaxspeed)
+                        X += groundslide * Time.deltaTime;
+
+                }
+                else if (playermoving != true)
+                {
+                    if (X > 0)
+                    {
+                        if (X - 0.1f > 0f)
+                        {
+                            X += -groundslide * Time.deltaTime;
+                        }
+                        else
+                            X = 0;
+                    }
+                    else
+                    {
+                        if (X + 0.1f < 0f)
+                        {
+                            X += groundslide * Time.deltaTime;
+                        }
+                        else
+                            X = 0;
+                    }
+
+                }
+
+
+
+
+            }
             //Behaviours for all the different angles go here.
-            if (transform.rotation.z >= angles[0].z && transform.rotation.z <= angles[1].z || transform.rotation.z <= -angles[0].z && transform.rotation.z >= -angles[1].z) //10 degrees
+            if (transform.rotation.z >= angles[1].z && transform.rotation.z <= angles[2].z || transform.rotation.z <= -angles[1].z && transform.rotation.z >= -angles[2].z) //10 degrees
             {
                     if (playermoving == true)
                         TerrainSlowDown(slowdown * 1.1f);
@@ -281,45 +508,42 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
 
 
             }
-            else if (transform.rotation.z >= angles[1].z && transform.rotation.z <= angles[2].z || transform.rotation.z <= -angles[0].z && transform.rotation.z >= -angles[1].z) //20
+            else if (transform.rotation.z >= angles[2].z && transform.rotation.z <= angles[3].z || transform.rotation.z <= -angles[2].z && transform.rotation.z >= -angles[3].z) //20
             {
-                if (playermoving == true)
-                    TerrainSlowDown(slowdown * 1.1f);
-                else
-                    SlowdownFunctionThingy();
+                TerrainSlowDown(slowdown * 1.2f);
 
             }
-            else if (transform.rotation.z >= angles[2].z && transform.rotation.z <= angles[3].z || transform.rotation.z <= -angles[1].z && transform.rotation.z >= -angles[2].z) //30
+            else if (transform.rotation.z >= angles[3].z && transform.rotation.z <= angles[4].z || transform.rotation.z <= -angles[3].z && transform.rotation.z >= -angles[4].z) //30
             {
                 TerrainSlowDown(slowdown * 1.3f);
 
             }
-            else if (transform.rotation.z >= angles[3].z && transform.rotation.z <= angles[4].z || transform.rotation.z <= -angles[2].z && transform.rotation.z >= -angles[3].z) //40
+            else if (transform.rotation.z >= angles[4].z && transform.rotation.z <= angles[5].z || transform.rotation.z <= -angles[4].z && transform.rotation.z >= -angles[5].z) //40
             {
                 TerrainSlowDown(slowdown * 1.4f);
 
             }
-            else if (transform.rotation.z >= angles[4].z && transform.rotation.z <= angles[5].z || transform.rotation.z <= -angles[4].z && transform.rotation.z >= -angles[5].z) //50
+            else if (transform.rotation.z >= angles[5].z && transform.rotation.z <= angles[6].z || transform.rotation.z <= -angles[5].z && transform.rotation.z >= -angles[6].z) //50
             {
                 TerrainSlowDown(slowdown * 1.5f);
 
             }
-            else if (transform.rotation.z >= angles[5].z && transform.rotation.z <= angles[6].z || transform.rotation.z <= -angles[5].z && transform.rotation.z >= -angles[6].z) //60
+            else if (transform.rotation.z >= angles[6].z && transform.rotation.z <= angles[7].z || transform.rotation.z <= -angles[6].z && transform.rotation.z >= -angles[7].z) //60
             {
                 TerrainSlowDown(slowdown * 1.6f);
 
             }
-            else if (transform.rotation.z >= angles[6].z && transform.rotation.z <= angles[7].z || transform.rotation.z <= -angles[6].z && transform.rotation.z >= -angles[7].z) //70
+            else if (transform.rotation.z >= angles[7].z && transform.rotation.z <= angles[8].z || transform.rotation.z <= -angles[7].z && transform.rotation.z >= -angles[8].z) //70
             {
                 TerrainSlowDown(slowdown * 1.7f);
 
             }
-            else if (transform.rotation.z >= angles[7].z && transform.rotation.z <= angles[8].z || transform.rotation.z <= -angles[7].z && transform.rotation.z >= -angles[8].z) //80
+            else if (transform.rotation.z >= angles[8].z && transform.rotation.z <= angles[9].z || transform.rotation.z <= -angles[8].z && transform.rotation.z >= -angles[9].z) //80
             {
                 TerrainSlowDown(slowdown * 1.8f);
 
             }
-            else if (transform.rotation.z >= angles[8].z && transform.rotation.z <= angles[9].z || transform.rotation.z <= -angles[8].z && transform.rotation.z >= -angles[9].z) //90
+            else if (transform.rotation.z >= angles[9].z && transform.rotation.z <= angles[10].z || transform.rotation.z <= -angles[9].z && transform.rotation.z >= -angles[10].z) //90
             {
                 TerrainSlowDown(slowdown * 1.9f);
 
@@ -332,8 +556,11 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     // Update is called once per frame
     void Update () {
         InputScript();
-        Momentum();
-	}
+        //Momentum();
+        //NewMomentum();
+        NEWNEWMOMENTUM();
+
+    }
     void FixedUpdate()
     {
         //UnityEngine.Debug.Log(elapsedtime);

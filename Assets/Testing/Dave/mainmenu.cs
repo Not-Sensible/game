@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 public class mainmenu : MonoBehaviour {
 
     public Texture background;
@@ -25,6 +27,18 @@ public class mainmenu : MonoBehaviour {
     public float quitX;
 
     
+
+    public void OnPointerEnter(PointerEventData eventData, Sprite newSprite)
+    {
+        pb.image.sprite = newSprite;
+        Debug.Log("Enter");
+    }
+
+    public void OnPointerExit (PointerEventData eventData, GUIStyle image)
+    {
+        pb.image.sprite = image;
+        Debug.Log("Exit");
+    }
 
     void OnGUI()
     {

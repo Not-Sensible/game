@@ -13,7 +13,6 @@ public class mainmenu : MonoBehaviour {
     public GUIStyle credits;
     public GUIStyle quit;
 
-
     public float levelSelectY;
     public float newGameY;
     public float optionsY;
@@ -27,18 +26,6 @@ public class mainmenu : MonoBehaviour {
     public float quitX;
 
     
-
-    public void OnPointerEnter(PointerEventData eventData, Sprite newSprite)
-    {
-        pb.image.sprite = newSprite;
-        Debug.Log("Enter");
-    }
-
-    public void OnPointerExit (PointerEventData eventData, GUIStyle image)
-    {
-        pb.image.sprite = image;
-        Debug.Log("Exit");
-    }
 
     void OnGUI()
     {

@@ -32,7 +32,7 @@ public class levelSelect : MonoBehaviour {
         if(GUI.Button(new Rect(Screen.width* level1X, Screen.height* level1Y, Screen.width* .235f, Screen.height* .2337f), "Level1", level1))
         {
           
-            SceneManager.LoadScene("Actual_level");
+            SceneManager.LoadScene(2);
             Debug.Log("working");
         }
         if (GUI.Button(new Rect(Screen.width* level2X, Screen.height* level2Y, Screen.width * .235f, Screen.height * .2337f), "Level2", level2))
@@ -53,7 +53,7 @@ public class levelSelect : MonoBehaviour {
         }
         if (GUI.Button(new Rect(Screen.width * backX, Screen.height * backY, Screen.width * .25f, Screen.height * .075f), "Back", back))
         {
-            SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadScene(0);
         }
     }
 

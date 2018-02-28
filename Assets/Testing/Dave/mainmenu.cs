@@ -11,6 +11,7 @@ public class mainmenu : MonoBehaviour {
     public GUIStyle credits;
     public GUIStyle quit;
 
+
     public float levelSelectY;
     public float newGameY;
     public float optionsY;
@@ -23,6 +24,7 @@ public class mainmenu : MonoBehaviour {
     public float creditsX;
     public float quitX;
 
+    
 
     void OnGUI()
     {
@@ -31,18 +33,19 @@ public class mainmenu : MonoBehaviour {
         if(GUI.Button(new Rect(Screen.width * levelSelectX, Screen.height * levelSelectY, Screen.width * .25f, Screen.height * .075f), "Level Select", levelSelect))
         {
             SceneManager.LoadScene(1);
+            
         }
         if (GUI.Button(new Rect(Screen.width * newGameX, Screen.height * newGameY, Screen.width * .25f, Screen.height * .075f), "New Game", newGame))
         {
-
+            SceneManager.LoadScene(2);
         }
         if (GUI.Button(new Rect(Screen.width * optionsX, Screen.height * optionsY, Screen.width * .25f, Screen.height * .075f), "Options", options))
         {
-
+            //SceneManager.LoadScene();
         }
         if(GUI.Button(new Rect(Screen.width * creditsX, Screen.height * creditsY, Screen.width * .25f, Screen.height * .075f), "Credits", credits))
         {
-
+            //SceneManager.LoadScene();
         }
 
         if (GUI.Button(new Rect(Screen.width * quitX, Screen.height * quitY, Screen.width * .25f, Screen.height * .075f), "Quit", quit))

@@ -19,25 +19,85 @@ public class PlayerMomentumAgain : MonoBehaviour {
     private char DesiredDir; //The desired direction
     public float slowdown;
     private float timeLeft;
-    private float tempangle;
-    private Quaternion[] angles;
+    private float groundholder = 4.0f;
+    private bool flying = false;
     public bool onGround;
     public Transform TouchingTerrain;
+    public Transform TouchingTerrain2;
     public Transform TerrainRight;
     public Transform TerrainLeft;
-    int bob = 0;
+    private Vector2 PreviousPos;
+    private bool stop;
     System.TimeSpan ts;
     int elapsedtime;
     Stopwatch stopwatch = new Stopwatch();
+    System.TimeSpan tss;
+    int elapsedjump;
+    Stopwatch stopjump = new Stopwatch();
+    bool jumping;
+    public float JumpValue;
     // Use this for initialization
+
     void Start() {
         rig2d = GetComponent<Rigidbody2D>();  //Enables the RigidBody2d component
         animy = GetComponent<Animator>();   //Allows the animator to work
         Block = FindObjectOfType<TerrainObject>();
-        CreateLists();
         RealMaxspeed = maxspeed;
+        stopjump.Start();
         stopwatch.Start();
-        
+
+    }
+    void Awake()
+    {
+#if UNITY_EDITOR
+        QualitySettings.vSyncCount = 0;  // VSync must be disabled
+        Application.targetFrameRate = 60;
+#endif
+    }
+    public struct Clocky
+    {
+        public System.TimeSpan ts;
+        public int elapsedtime;
+        public Stopwatch stopwatch2;
+        public void Clocky222(int x)
+        {
+            stopwatch2 = new Stopwatch();
+            ts = stopwatch2.Elapsed;
+            elapsedtime = 0;
+
+        }
+
+    }
+    void donotfall(int angle, RaycastHit2D ray)
+    {
+        switch (angle)
+        {
+            case 0:
+                transform.position = new Vector3(transform.localPosition.x, ray.transform.gameObject.transform.localPosition.y + 1.5f);
+                //UnityEngine.Debug.Log("FUCK OFF");
+                break;
+            case 10:
+                transform.position = new Vector3(transform.localPosition.x +0.1f, ray.transform.gameObject.transform.localPosition.y + 1.4f);
+                //UnityEngine.Debug.Log("FUCK OFF");
+                break;
+            case 20:
+                transform.position = new Vector3(transform.localPosition.x +0.3f, ray.transform.gameObject.transform.localPosition.y + 1.3f);
+                UnityEngine.Debug.Log("FUCK OFF");
+                break;
+            case 30:
+                transform.position = new Vector3(transform.localPosition.x + 0.4f, ray.transform.gameObject.transform.localPosition.y + 1.2f);
+                UnityEngine.Debug.Log("FUCK OFF");
+                break;
+            case 40:
+                transform.position = new Vector3(transform.localPosition.x + 0.5f, ray.transform.gameObject.transform.localPosition.y + 1.1f);
+                UnityEngine.Debug.Log("FUCK OFF");
+                break;
+            case 50:
+                transform.position = new Vector3(transform.localPosition.x + 0.6f, ray.transform.gameObject.transform.localPosition.y + 1.0f);
+                UnityEngine.Debug.Log("FUCK OFF");
+                break;
+
+        }
     }
     void AngleCheck() //This is used to work out if the player is on a 60 degree angle, if they are, it checks with a raycast if the next block is 90 degrees or not, as the player usually falls if it is.
     {
@@ -61,13 +121,33 @@ public class PlayerMomentumAgain : MonoBehaviour {
             }
 
         }
+        else if (transform.rotation.eulerAngles.z ==90.0f|| transform.rotation.eulerAngles.z==270.0f)
+        {
+            UnityEngine.Debug.Log("OII");
+            if (X < 0 && transform.position.y < PreviousPos.y)
+            {
+                RaycastHit2D ray = Physics2D.Raycast(new Vector2(TerrainLeft.position.x, TerrainLeft.position.y), Vector2.right * 15); //Raycasts from the left floating orb boi
+                if (ray == true && ray.transform.gameObject.tag == "block" && ray.transform.gameObject.transform.rotation.eulerAngles.z == 60.0f)  //Checks if the object detected is infact a block and that the rotation is 60 degrees
+                {
+                    transform.rotation = ray.transform.gameObject.transform.rotation; //Sets the player's roation to that block.
+                }
+            }
+            if (X > 0 && transform.position.y < PreviousPos.y)
+            {
+                RaycastHit2D ray = Physics2D.Raycast(new Vector2(TerrainRight.position.x, TerrainRight.position.y), Vector2.left * 15); //Raycasts from the left floating orb boi
+                if (ray == true && ray.transform.gameObject.tag == "block" && ray.transform.gameObject.transform.rotation.eulerAngles.z == 300.0f)  //Checks if the object detected is infact a block and that the rotation is 60 degrees
+                {
+                    transform.rotation = ray.transform.gameObject.transform.rotation; //Sets the player's roation to that block.
+                }
+            }
+        }
 
     }
     void OnDrawGizmosSelected() //Just used to draw the path of the ray for debugging reasons, could be used for other stuff if you want. IF SOMEONE ELSE ACTUALLY LOOKED AT THIS THAT IS >:( anger
     {
         Gizmos.color = Color.red;
-        Vector3 direction = TouchingTerrain.TransformDirection(Vector2.down) * 15;
-        Gizmos.DrawRay(TouchingTerrain.position, direction);
+        Vector3 direction = TerrainRight.TransformDirection(Vector2.down) * 15;
+        Gizmos.DrawRay(TerrainRight.position, direction);
     }
     private void RaycastingTerrain()  //This script is being used to test the terrain beneath the player and translate the player to the angle beneath them, preventing issues with terrain.
     {
@@ -90,14 +170,17 @@ public class PlayerMomentumAgain : MonoBehaviour {
     bool RayCastCheck()   //This is used to check if the player is on the same angle as the terrain directly beneath them
     {   //The Rest of the function is the same as the raycast check above
         RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15);
+        //float d = Mathf.Sqrt(Mathf.Pow(transform.position.x - ray.transform.gameObject.transform.position.x, 2) + Mathf.Pow(transform.position.y - ray.transform.gameObject.transform.position.y, 2));
+        //UnityEngine.Debug.Log(d);
         if (ray == true && ray.transform.gameObject.transform.tag=="block")
         {
-            float temp = ray.transform.gameObject.transform.rotation.eulerAngles.z;
+           // donotfall( Mathf.RoundToInt(transform.rotation.eulerAngles.z), ray);
+            //float temp = ray.transform.gameObject.transform.rotation.eulerAngles.z;
             // if (temp-transform.rotation.z<0 && temp-transform.rotation.z>5 || temp-)
+            //transform.position = new Vector3(transform.position.x, ray.transform.gameObject.transform.localPosition.y + 1.4f);
             transform.rotation = ray.transform.gameObject.transform.rotation;
             return (true);
         }
-
         return false;
         
     }
@@ -108,16 +191,6 @@ OMG 😱😱😱 BRO👬 CALM 😴😴 DOWN BRO ⬇️⬇️ SIMMER ☕️☕️
 
 Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes 👄💦😩 to visit you 👣👟and give 👍🏼 you a package 🙈📦💌💦. Hope you were a 😇🙂 good girl 😛🍆 this year instead of the😽 usual 😼 naughty 🙄 girl 💦🍑👅😛😫🔥🔥. Santa is definitely ✊🏻 coming 💧tonight 🎅🏿🎅🏻😳😏 and he's gonna 😍😘 stuff your stocking 😝👌🏽👈🏽 with goodies 💋💄👙👗 tonight on this 🎄Christmas 🎄night ❄️⛄️☃🌨💫. Santa 🎅🏻 is gonna 💪🏿💪🏼✊🏻squeeze 🖖🏻down your 👧🏽 😰 narrow 😛😍chimney 🏡🏠 and show you 👀 that you've been a very👸🏽👸🏽 naughty 😏😫😝 girl. Then his 💁🏼 helper 😬😏 Boy 🍆🙃🙂 is gonna 🎄sleigh you baby 😛😏😲👐🏼🙌🏻 and inspect 🕵🔎🔍 that 🍑 sweet 💦 ass🍑 because that's what 👉🏽you👈🏽 want for Christmas 🍑💦😛🔥😏😍🍆👅👀 Santa 🎅🏻 is cumin😻👽 to town 🏢🏦🏬🏚🏡🏠🏣🏤 the clock 🕐 is ticking 🙄 be ready 😏😛🍆 Santa is cumin down↘️⬇️↙️ your👌🏽😍 chimney🖖🏻👅 tonight 😮and he's gonna 😨drown in that chimney 🤐😰💦💧☔️🏊🏼🏄🏼🚣🏼 of yours 🛀🏼🍆🍑 SLEIGH 🎄🎄 🎅🏻SANTA🎅🏻 🎄🎄 SLEIGH 🍆😩💦👩‍❤️‍💋‍👩
     */
-    public void CreateLists()  //They had to be here because I have no clue what this excuse of a language defines as scope
-    {
-        angles = new Quaternion[35];  //Creating a list with the angles, more for convinience than having a load of random variable names
-        for (float i = 10.0f; i <= 350; i += 10.0f)   //Angles goes up in 10 degree intervals, therefore all comparisons must be made within 10 degrees, I guess we could go up in more intervels such as 5 but this works too.
-        {
-            angles[bob] = Quaternion.Euler(0, 0, i);
-            bob += 1;
-        };
-        //Add more I guess 
-    }
 
     public void clock()   //Clock system for the character, can be used for anything. //But doesn't actually work
     {
@@ -127,6 +200,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     void checks() //Clock is here, pretty useless really, should be reliant on something else.
     {
         onGround = Physics2D.OverlapCircle(TouchingTerrain.position, GroundCheckRadius, CollideList); //Code to work out if the player is on terrain or not
+        //onGround = Physics2D.OverlapCircle(TouchingTerrain2.position, GroundCheckRadius, CollideList); //Code to work out if the player is on terrain or not
         if (onGround != true)
         {
             stopwatch.Start();
@@ -142,9 +216,17 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
 
         }
         else
-            stopwatch.Reset();
+           stopwatch.Reset();
+        if(jumping==true)
+        {
+            Jump();
+        }
         RayCastCheck();
         AngleCheck();
+        PreviousPos = new Vector2(transform.position.x, transform.position.y);
+        if (onGround == true && jumping != true)
+            GravityStrength = 6.0f;
+            flying = false;
         //TouchingTerrain.rotation = transform.rotation;
         
 
@@ -152,7 +234,23 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
 
     }
 
-
+    void Jump()
+    {
+        stopjump.Start();
+        System.TimeSpan tss = stopjump.Elapsed;
+        elapsedjump = tss.Milliseconds;
+        UnityEngine.Debug.Log(elapsedjump);
+        if (elapsedjump < 500)
+        {
+            transform.Translate(0, JumpValue * Time.deltaTime, 0, 0);
+        }
+        else
+        {
+            stopjump.Reset();
+            elapsedjump = 0;
+            jumping = false;
+        }
+    }
     void InputScript()
     {
         //Placeholder
@@ -161,7 +259,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
             DesiredDir = 'L';
             playermoving = true;
         }
-        if (Input.GetKeyDown("d"))
+        else if (Input.GetKeyDown("d"))
         {
             DesiredDir = 'R';
             playermoving = true;
@@ -172,18 +270,29 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
             DesiredDir = 'N';
             playermoving = false;
         }
-        if (Input.GetKeyUp("d"))
+        else if (Input.GetKeyUp("d"))
         {
             //X = 0;
             DesiredDir = 'N';
             playermoving = false;
         }
-        Movement(DesiredDir, onGround);
-        Y = -GravityStrength;
-        transform.Translate(X * Time.deltaTime, 0, 0);
-        if (onGround != true)
+        if (Input.GetKeyDown("space"))
         {
-            transform.Translate(0, Y * Time.deltaTime, 0, 0);
+            flying = true;
+            jumping = true;
+        }
+        Movement(DesiredDir, onGround);
+        //Y =-GravityStrength;
+        transform.Translate(X * Time.deltaTime, 0, 0);
+        if (onGround != true && flying==false)
+        {
+            transform.Translate(0, -groundholder * Time.deltaTime, 0, 0);
+        }
+        else if(onGround!=true && flying==true)
+        {
+            transform.Translate(0, -GravityStrength * Time.deltaTime, 0, Space.World);
+            UnityEngine.Debug.Log("OI");
+            GravityStrength += (GravityStrength * 0.1f);
         }
 
     }
@@ -216,7 +325,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
             {
                 playermoving = false;
             }
-            if (transform.rotation.z < angles[0].z && transform.rotation.z > -angles[0].z)
+            if (transform.rotation.z < Quaternion.Euler(0, 0, 10).z && transform.rotation.z > Quaternion.Euler(0, 0, -10).z)
             {
                 RealMaxspeed = maxspeed;
                 if (playermoving == true)
@@ -289,10 +398,11 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     void Update () {
         InputScript();
         Momentum();
+        checks();
 
     }
     void FixedUpdate()
     {
-        checks();
+       
     }
 }

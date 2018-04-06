@@ -6,3 +6,5 @@ ProjectSettings/
 test_Data/
 
 test\.exe
+
+*.meta

@@ -9,6 +9,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
     public float GravityStrength;
     public float X, Y; //X and Y of the player
     public TerrainObject Block;
+    private float raycastdistance=10.0f;
     private Rigidbody2D rig2d;
     private Animator animy;
     private bool playermoving;
@@ -19,33 +20,75 @@ public class PlayerMomentumAgain : MonoBehaviour {
     private char DesiredDir; //The desired direction
     public float slowdown;
     private float timeLeft;
-    private float tempangle;
-    private Quaternion[] angles;
+    private float groundholder = 10.0f;
+    private bool flying = false;
     public bool onGround;
     public Transform TouchingTerrain;
+    public Transform TouchingTerrain2;
     public Transform TerrainRight;
     public Transform TerrainLeft;
-    int bob = 0;
+    private Transform JumpTransform;
+    private Vector2 PreviousPos;
+    private Transform Lastground;
+    public float jumpY;
+    private bool stop;
     System.TimeSpan ts;
     int elapsedtime;
     Stopwatch stopwatch = new Stopwatch();
+    System.TimeSpan tss;
+    int elapsedjump;
+    Stopwatch stopjump = new Stopwatch();
+    bool jumping;
+    public float JumpValue;
     // Use this for initialization
+
+
     void Start() {
         rig2d = GetComponent<Rigidbody2D>();  //Enables the RigidBody2d component
         animy = GetComponent<Animator>();   //Allows the animator to work
         Block = FindObjectOfType<TerrainObject>();
-        CreateLists();
         RealMaxspeed = maxspeed;
+        stopjump.Start();
         stopwatch.Start();
-        
+
     }
+    void OnCollisionEnter2D(Collision2D coll)
+    {
+       // UnityEngine.Debug.Log("WHYYYYYYYYYYYYY");
+
+        if (coll.gameObject.tag == "wall" && X>0)
+        {
+            if (X > 0)
+                X = (X * -0.8f);
+
+            //X = 0;
+        }
+        else if (coll.gameObject.tag == "wall" && X < 0)
+        {
+            if (X < 0)
+                X = (-X * 0.8f);
+        }
+    }
+    void Awake() // jeff
+    {
+#if UNITY_EDITOR
+        QualitySettings.vSyncCount = 0;  // VSync must be disabled
+        Application.targetFrameRate = 60;
+#endif
+#if UNITY_STANDALONE_WIN
+        QualitySettings.vSyncCount = 0;  // VSync must be disabled
+        Application.targetFrameRate = 60;
+#endif
+    }
+
+
     void AngleCheck() //This is used to work out if the player is on a 60 degree angle, if they are, it checks with a raycast if the next block is 90 degrees or not, as the player usually falls if it is.
     {
         if (transform.rotation.eulerAngles.z >= 60 && transform.rotation.eulerAngles.z <= 80 || transform.rotation.eulerAngles.z <= 300 && transform.rotation.eulerAngles.z >= 280) //Checks angles
         {
             if (X < 0)  //Works out if the player is moving left
             {
-                RaycastHit2D ray = Physics2D.Raycast(new Vector2(TerrainLeft.position.x, TerrainLeft.position.y), Vector2.right * 15); //Raycasts from the left floating orb boi
+                RaycastHit2D ray = Physics2D.Raycast(new Vector2(TerrainLeft.position.x, TerrainLeft.position.y), Vector2.right * 15,8); //Raycasts from the left floating orb boi
                 if (ray == true && ray.transform.gameObject.tag == "block" && ray.transform.gameObject.transform.rotation.eulerAngles.z == 90.0f)  //Checks if the object detected is infact a block and that the rotation is 90 degrees
                 {
                     transform.rotation = ray.transform.gameObject.transform.rotation; //Sets the player's roation to that block.
@@ -53,7 +96,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
             }
             if (X > 0)  //Sees if the player is moving right
             {
-                RaycastHit2D ray = Physics2D.Raycast(new Vector2(TerrainRight.position.x, TerrainRight.position.y), Vector2.left * 15);  //Raycasts from the Right floating orb boi
+                RaycastHit2D ray = Physics2D.Raycast(new Vector2(TerrainRight.position.x, TerrainRight.position.y), Vector2.left * 15,8);  //Raycasts from the Right floating orb boi
                 if (ray == true && ray.transform.gameObject.tag == "block" && ray.transform.gameObject.transform.rotation.eulerAngles.z == 270.0f) //Checks if the object detected is infact a block and that the rotation is -90 degrees
                 {
                     transform.rotation = ray.transform.gameObject.transform.rotation;//Sets the player's roation to that block.
@@ -61,18 +104,37 @@ public class PlayerMomentumAgain : MonoBehaviour {
             }
 
         }
+        /*else if (transform.rotation.eulerAngles.z ==90.0f|| transform.rotation.eulerAngles.z==270.0f)
+        {
+            if (X < 0 && transform.position.y < PreviousPos.y)
+            {
+                RaycastHit2D ray = Physics2D.Raycast(new Vector2(TerrainLeft.position.x, TerrainLeft.position.y), Vector2.right * 15); //Raycasts from the left floating orb boi
+                if (ray == true && ray.transform.gameObject.tag == "block" && ray.transform.gameObject.transform.rotation.eulerAngles.z == 60.0f)  //Checks if the object detected is infact a block and that the rotation is 60 degrees
+                {
+                    transform.rotation = ray.transform.gameObject.transform.rotation; //Sets the player's roation to that block.
+                }
+            }
+            if (X > 0 && transform.position.y < PreviousPos.y)
+            {
+                RaycastHit2D ray = Physics2D.Raycast(new Vector2(TerrainRight.position.x, TerrainRight.position.y), Vector2.left * 15); //Raycasts from the Right floating orb boi
+                if (ray == true && ray.transform.gameObject.tag == "block" && ray.transform.gameObject.transform.rotation.eulerAngles.z == 300.0f)  //Checks if the object detected is infact a block and that the rotation is 60 degrees
+                {
+                    transform.rotation = ray.transform.gameObject.transform.rotation; //Sets the player's roation to that block.
+                }
+            }*/
+        //}
 
     }
     void OnDrawGizmosSelected() //Just used to draw the path of the ray for debugging reasons, could be used for other stuff if you want. IF SOMEONE ELSE ACTUALLY LOOKED AT THIS THAT IS >:( anger
     {
         Gizmos.color = Color.red;
-        Vector3 direction = TouchingTerrain.TransformDirection(Vector2.down) * 15;
-        Gizmos.DrawRay(TouchingTerrain.position, direction);
+        Vector3 direction = TerrainRight.TransformDirection(Vector2.down) * 15;
+        Gizmos.DrawRay(TerrainRight.position, direction);
     }
     private void RaycastingTerrain()  //This script is being used to test the terrain beneath the player and translate the player to the angle beneath them, preventing issues with terrain.
     {
-        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x,TouchingTerrain.position.y), Vector2.down*15);  //Defining the ray and its path, Trying to offset the ray in testing as it gets stuck in the player object
-        if (ray == true && ray.transform.gameObject.tag == "block")  //If true do this
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x,TouchingTerrain.position.y), Vector2.down*15,8);  //Defining the ray and its path, Trying to offset the ray in testing as it gets stuck in the player object
+        if (ray == true && ray.transform.gameObject.tag == "block" && ray.transform.gameObject.transform.eulerAngles.z!=90.0f || ray == true && ray.transform.gameObject.tag == "block" && ray.transform.gameObject.transform.eulerAngles.z != 270.0f )  //If true do this
             transform.rotation = ray.transform.gameObject.transform.rotation; //Sets the player's angle to the terrain
         else
             transform.rotation= Quaternion.Euler(0,0,0);
@@ -80,7 +142,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
     }
     private GameObject raycastreturn()
     {
-        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15);
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15,8);
         if (ray == true && ray.transform.gameObject.transform.tag == "block")
         {
             return ray.transform.gameObject;
@@ -89,15 +151,26 @@ public class PlayerMomentumAgain : MonoBehaviour {
     }
     bool RayCastCheck()   //This is used to check if the player is on the same angle as the terrain directly beneath them
     {   //The Rest of the function is the same as the raycast check above
-        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15);
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15,8);
         if (ray == true && ray.transform.gameObject.transform.tag=="block")
         {
-            float temp = ray.transform.gameObject.transform.rotation.eulerAngles.z;
-            // if (temp-transform.rotation.z<0 && temp-transform.rotation.z>5 || temp-)
             transform.rotation = ray.transform.gameObject.transform.rotation;
             return (true);
         }
-
+        else if (ray == true && ray.transform.gameObject.transform.tag == "block"   && ray.transform.gameObject.transform.eulerAngles.z!=90.0f || ray == true && ray.transform.gameObject.transform.tag == "block"  && ray.transform.gameObject.transform.eulerAngles.z != 270.0f)
+        {
+            transform.rotation = ray.transform.gameObject.transform.rotation;
+            return (true);
+        }
+        //else if(ray ==true && ray.transform.gameObject.transform.tag=="block" && flying==true && ray.transform.gameObject.transform.rotation.eulerAngles.z < 60.0f || ray == true && ray.transform.gameObject.transform.tag == "block" && flying == true && ray.transform.gameObject.transform.rotation.eulerAngles.z > 300.0f )
+        //{
+        //  transform.rotation = ray.transform.gameObject.transform.rotation;
+        //return (true);
+        //}
+        //   else if(ray == true && ray.transform.gameObject.transform.tag == "block" && jumping != true && ray.transform.gameObject.transform.rotation.eulerAngles.z <= 45 && ray == true && ray.transform.gameObject.transform.tag == "block" && jumping != true && ray.transform.gameObject.transform.rotation.eulerAngles.z >= 315) 
+        //{
+        //   transform.rotation = ray.transform.gameObject.transform.rotation;
+        // }
         return false;
         
     }
@@ -108,16 +181,6 @@ OMG 😱😱😱 BRO👬 CALM 😴😴 DOWN BRO ⬇️⬇️ SIMMER ☕️☕️
 
 Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes 👄💦😩 to visit you 👣👟and give 👍🏼 you a package 🙈📦💌💦. Hope you were a 😇🙂 good girl 😛🍆 this year instead of the😽 usual 😼 naughty 🙄 girl 💦🍑👅😛😫🔥🔥. Santa is definitely ✊🏻 coming 💧tonight 🎅🏿🎅🏻😳😏 and he's gonna 😍😘 stuff your stocking 😝👌🏽👈🏽 with goodies 💋💄👙👗 tonight on this 🎄Christmas 🎄night ❄️⛄️☃🌨💫. Santa 🎅🏻 is gonna 💪🏿💪🏼✊🏻squeeze 🖖🏻down your 👧🏽 😰 narrow 😛😍chimney 🏡🏠 and show you 👀 that you've been a very👸🏽👸🏽 naughty 😏😫😝 girl. Then his 💁🏼 helper 😬😏 Boy 🍆🙃🙂 is gonna 🎄sleigh you baby 😛😏😲👐🏼🙌🏻 and inspect 🕵🔎🔍 that 🍑 sweet 💦 ass🍑 because that's what 👉🏽you👈🏽 want for Christmas 🍑💦😛🔥😏😍🍆👅👀 Santa 🎅🏻 is cumin😻👽 to town 🏢🏦🏬🏚🏡🏠🏣🏤 the clock 🕐 is ticking 🙄 be ready 😏😛🍆 Santa is cumin down↘️⬇️↙️ your👌🏽😍 chimney🖖🏻👅 tonight 😮and he's gonna 😨drown in that chimney 🤐😰💦💧☔️🏊🏼🏄🏼🚣🏼 of yours 🛀🏼🍆🍑 SLEIGH 🎄🎄 🎅🏻SANTA🎅🏻 🎄🎄 SLEIGH 🍆😩💦👩‍❤️‍💋‍👩
     */
-    public void CreateLists()  //They had to be here because I have no clue what this excuse of a language defines as scope
-    {
-        angles = new Quaternion[35];  //Creating a list with the angles, more for convinience than having a load of random variable names
-        for (float i = 10.0f; i <= 350; i += 10.0f)   //Angles goes up in 10 degree intervals, therefore all comparisons must be made within 10 degrees, I guess we could go up in more intervels such as 5 but this works too.
-        {
-            angles[bob] = Quaternion.Euler(0, 0, i);
-            bob += 1;
-        };
-        //Add more I guess 
-    }
 
     public void clock()   //Clock system for the character, can be used for anything. //But doesn't actually work
     {
@@ -127,12 +190,17 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     void checks() //Clock is here, pretty useless really, should be reliant on something else.
     {
         onGround = Physics2D.OverlapCircle(TouchingTerrain.position, GroundCheckRadius, CollideList); //Code to work out if the player is on terrain or not
+        //onGround = Physics2D.OverlapCircle(TouchingTerrain2.position, GroundCheckRadius, CollideList); //Code to work out if the player is on terrain or not
+        if(onGround==true)
+        {
+            Lastground = transform;
+        }
         if (onGround != true)
         {
             stopwatch.Start();
             System.TimeSpan ts = stopwatch.Elapsed;
             int elapsedtime = ts.Seconds;
-           // UnityEngine.Debug.Log(elapsedtime);
+            // UnityEngine.Debug.Log(elapsedtime);
             if (elapsedtime == 2)
             {
                 RaycastingTerrain();
@@ -142,9 +210,23 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
 
         }
         else
+        {
+
+            Y = 0;
             stopwatch.Reset();
+        }
+        if(jumping==true)
+        {
+           // Jump();
+        }
         RayCastCheck();
         AngleCheck();
+        PreviousPos = new Vector2(transform.position.x, transform.position.y);
+        if (onGround == true && jumping == false)
+        {
+            //GravityStrength = 1.0f;
+            //flying = false;
+        }
         //TouchingTerrain.rotation = transform.rotation;
         
 
@@ -152,7 +234,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
 
     }
 
-
+    
     void InputScript()
     {
         //Placeholder
@@ -161,7 +243,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
             DesiredDir = 'L';
             playermoving = true;
         }
-        if (Input.GetKeyDown("d"))
+        else if (Input.GetKeyDown("d"))
         {
             DesiredDir = 'R';
             playermoving = true;
@@ -172,18 +254,50 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
             DesiredDir = 'N';
             playermoving = false;
         }
-        if (Input.GetKeyUp("d"))
+        else if (Input.GetKeyUp("d"))
         {
             //X = 0;
             DesiredDir = 'N';
             playermoving = false;
         }
-        Movement(DesiredDir, onGround);
-        Y = -GravityStrength;
-        transform.Translate(X * Time.deltaTime, 0, 0);
-        if (onGround != true)
+        if (Input.GetKeyDown("space") && onGround==true)
         {
-            transform.Translate(0, Y * Time.deltaTime, 0, 0);
+            flying = true;
+            jumping = true;
+            //Y = JumpValue;
+            jumpY = JumpValue;
+            JumpTransform = transform;
+            transform.Translate(0, 60*Time.deltaTime,0,JumpTransform);
+        }
+        Movement(DesiredDir, onGround);
+        //Y =-GravityStrength;
+        if(onGround==true)
+            transform.Translate(X * Time.deltaTime, 0, 0,Lastground);
+        else if(onGround==false && jumping==true)
+        {
+            transform.Translate(X * Time.deltaTime, 0, 0, JumpTransform);
+        }
+        else
+        {
+            transform.Translate(X * Time.deltaTime, 0, 0, Space.World);
+        }
+        if (onGround != true && flying==false)
+        {
+            transform.Translate(0, -groundholder * Time.deltaTime, 0, 0);
+        }
+        else if(onGround!=true && flying==true)
+        {
+            if (Y > -50 && jumpY <= 0)
+            {
+                Y += (-GravityStrength * 3 * Time.deltaTime);
+                transform.Translate(0, Y * Time.deltaTime, 0, Space.World);
+            }
+            else if (JumpTransform != null)
+            {
+                jumping = false;
+                transform.Translate(0, jumpY * Time.deltaTime, 0, JumpTransform);
+                jumpY += (-GravityStrength * 3 * Time.deltaTime);
+            }
         }
 
     }
@@ -193,6 +307,10 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
             X += -speed * Time.deltaTime;
         else if (onGround == true && dir == 'R' && X < RealMaxspeed)
             X += speed * Time.deltaTime;
+        if (onGround != true && dir == 'L' && X > -RealMaxspeed)
+            X += (-speed * 0.55f) * Time.deltaTime;
+        else if (onGround != true && dir == 'R' && X < RealMaxspeed)
+            X += (speed*0.55f) * Time.deltaTime;
 
     }
 
@@ -216,7 +334,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
             {
                 playermoving = false;
             }
-            if (transform.rotation.z < angles[0].z && transform.rotation.z > -angles[0].z)
+            if (transform.rotation.z < Quaternion.Euler(0, 0, 10).z && transform.rotation.z > Quaternion.Euler(0, 0, -10).z)
             {
                 RealMaxspeed = maxspeed;
                 if (playermoving == true)
@@ -235,7 +353,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
                         {
                             X += -groundslide * Time.deltaTime;
                         }
-                        else
+                       else
                             X = 0;
                     }
                     else
@@ -255,7 +373,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
 
             }
         }
-        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15);
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15,8);
 
         if (ray == true && ray.transform.gameObject.transform.tag == "block")
         {
@@ -289,10 +407,11 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     void Update () {
         InputScript();
         Momentum();
+        checks();
 
     }
     void FixedUpdate()
     {
-        checks();
+       
     }
 }

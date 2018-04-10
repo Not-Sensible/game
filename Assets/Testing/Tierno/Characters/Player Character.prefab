@@ -155,8 +155,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1404784074530088}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 282.71, y: -60.05, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0.008671974, w: 0.9999624}
+  m_LocalPosition: {x: 3.221574, y: -5.6192985, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4721597822757858}
@@ -257,7 +257,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxspeed: 28
   speed: 15
-  RealMaxspeed: 0
+  RealMaxspeed: 28
   GravityStrength: 12
   X: 0
   Y: 0
@@ -267,12 +267,12 @@ MonoBehaviour:
     m_Bits: 257
   GroundCheckRadius: 0.2
   slowdown: 20
-  onGround: 0
+  onGround: 1
   TouchingTerrain: {fileID: 4120450292432338}
   TouchingTerrain2: {fileID: 0}
   TerrainRight: {fileID: 4865802972109686}
   TerrainLeft: {fileID: 4404178131780458}
-  jumpY: 0
+  jumpY: 18
   JumpValue: 18
 --- !u!212 &212014089276014026
 SpriteRenderer:

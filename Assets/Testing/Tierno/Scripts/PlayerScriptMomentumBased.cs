@@ -89,6 +89,7 @@ public class PlayerScriptMomentumBased : MonoBehaviour {
         }
         if (Input.GetKeyDown("space"))
         {
+            Debug.Log("woooosh");  //Make it do stuff
             rig2d.MoveRotation(angles[2].eulerAngles.z*-1);
         }
         if(Input.GetKeyUp("a"))

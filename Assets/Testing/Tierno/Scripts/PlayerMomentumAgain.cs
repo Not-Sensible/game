@@ -14,6 +14,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
     private Animator animy;
     private bool playermoving;
     public LayerMask CollideList; //Temporary, dimension shifting will require lots of these, although I can imagine more blunt ways of doing it
+    public LayerMask wall;
     private float groundslide = 25;
     public float GroundCheckRadius;
     private char direction; //Actual direction of the player
@@ -21,17 +22,21 @@ public class PlayerMomentumAgain : MonoBehaviour {
     public float slowdown;
     private float timeLeft;
     private float groundholder = 10.0f;
-    private bool flying = false;
+    public bool flying = false;
     public bool onGround;
     public Transform TouchingTerrain;
+    public Transform left;
+    public Transform right;
     public Transform TouchingTerrain2;
     public Transform TerrainRight;
     public Transform TerrainLeft;
+    public bool moveright = true;
+    public bool moveleft = true;
     private Transform JumpTransform;
     private Vector2 PreviousPos;
     private Transform Lastground;
     public float jumpY;
-    private bool stop;
+    private bool stop=false;
     System.TimeSpan ts;
     int elapsedtime;
     Stopwatch stopwatch = new Stopwatch();
@@ -52,23 +57,6 @@ public class PlayerMomentumAgain : MonoBehaviour {
         stopwatch.Start();
 
     }
-    void OnCollisionEnter2D(Collision2D coll)
-    {
-       // UnityEngine.Debug.Log("WHYYYYYYYYYYYYY");
-
-        if (coll.gameObject.tag == "wall" && X>0)
-        {
-            if (X > 0)
-                X = (X * -0.8f);
-
-            //X = 0;
-        }
-        else if (coll.gameObject.tag == "wall" && X < 0)
-        {
-            if (X < 0)
-                X = (-X * 0.8f);
-        }
-    }
     void Awake() // jeff
     {
 #if UNITY_EDITOR
@@ -81,7 +69,44 @@ public class PlayerMomentumAgain : MonoBehaviour {
 #endif
     }
 
+    void Collisions()
+    {
+        RaycastHit2D ray = Physics2D.Raycast(left.position, Vector2.left, 0.01f);
+        if (ray == true && ray.transform.gameObject.tag == "Wall")
+        {
+            X = 0;
+            moveleft = false;
+        }
+        else
+            moveleft = true;
 
+        RaycastHit2D ray2 = Physics2D.Raycast(right.position, Vector2.right, 0.01f);
+        if (ray2 == true && ray2.transform.gameObject.tag == "Wall")
+        {
+            X = 0;
+            moveright = false;
+        }
+        else
+            moveright = true;
+        /*bool temp=Physics2D.OverlapCircle(new Vector2(TerrainRight.position.x, TerrainRight.position.y), GroundCheckRadius, wall); //Code to work out if the player is on terrain or not
+        if (temp == true)
+        {
+            UnityEngine.Debug.Log("WHY");
+            X = 0;
+            moveright = false;
+        }
+        else
+            moveright = true;
+        Physics2D.OverlapCircle(new Vector2(TerrainLeft.position.x, TerrainLeft.position.y), GroundCheckRadius, wall); //Code to work out if the player is on terrain or not
+       
+        if (temp == true)
+        {
+            X = 0;
+            moveleft = false;
+        }
+        else
+            moveleft = true;*/
+    }
     void AngleCheck() //This is used to work out if the player is on a 60 degree angle, if they are, it checks with a raycast if the next block is 90 degrees or not, as the player usually falls if it is.
     {
         if (transform.rotation.eulerAngles.z >= 60 && transform.rotation.eulerAngles.z <= 80 || transform.rotation.eulerAngles.z <= 300 && transform.rotation.eulerAngles.z >= 280) //Checks angles
@@ -253,12 +278,12 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     void InputScript()
     {
         //Placeholder
-        if (Input.GetKeyDown("a"))
+        if (Input.GetKeyDown("a") && moveleft==true)
         {
             DesiredDir = 'L';
             playermoving = true;
         }
-        else if (Input.GetKeyDown("d"))
+        else if (Input.GetKeyDown("d") && moveright == true)
         {
             DesiredDir = 'R';
             playermoving = true;
@@ -304,7 +329,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
         {
             if (Y > -50 && jumpY <= 0)
             {
-                Y += (-GravityStrength * 3 * Time.deltaTime);
+                Y += (-GravityStrength *3.0f * Time.deltaTime);
                 transform.Translate(0, Y * Time.deltaTime, 0, Space.World);
             }
             else if (JumpTransform != null)
@@ -318,13 +343,14 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     }
     void Movement(char dir,bool IsOnGround)
     {
-        if (onGround == true && dir == 'L' && X > -RealMaxspeed)
+
+        if (onGround == true && dir == 'L' && X > -RealMaxspeed && moveleft!=false)
             X += -speed * Time.deltaTime;
-        else if (onGround == true && dir == 'R' && X < RealMaxspeed)
+        else if (onGround == true && dir == 'R' && X < RealMaxspeed && moveright != false)
             X += speed * Time.deltaTime;
-        if (onGround != true && dir == 'L' && X > -RealMaxspeed)
+        if (onGround != true && dir == 'L' && X > -RealMaxspeed && moveleft != false)
             X += (-speed * 0.55f) * Time.deltaTime;
-        else if (onGround != true && dir == 'R' && X < RealMaxspeed)
+        else if (onGround != true && dir == 'R' && X < RealMaxspeed && moveright != false)
             X += (speed*0.55f) * Time.deltaTime;
     }
 
@@ -419,10 +445,10 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
 
     // Update is called once per frame
     void Update () {
+        Collisions();
         InputScript();
         Momentum();
         checks();
-
     }
     void FixedUpdate()
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ActualBody : MonoBehaviour {
-    private PlayerMomentumAgain player;
+    public PlayerMomentumAgain player;
     char dir = 'R';
     SpriteRenderer m_SpriteRenderer;
     public Sprite sprite1;
@@ -16,9 +16,9 @@ public class ActualBody : MonoBehaviour {
         m_SpriteRenderer.sprite = sprite1;
         //Output the current Texture of the Sprite (this returns the source Sprite if the Texture isn't packed)
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+
+    void Update () {
 		
 	}
      void FixedUpdate()

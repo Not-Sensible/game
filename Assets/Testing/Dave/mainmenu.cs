@@ -9,19 +9,16 @@ public class mainmenu : MonoBehaviour {
     public Texture background;
     public GUIStyle levelSelect;
     public GUIStyle newGame;
-    public GUIStyle options;
     public GUIStyle credits;
     public GUIStyle quit;
 
     public float levelSelectY;
     public float newGameY;
-    public float optionsY;
     public float creditsY;
     public float quitY;
 
     public float levelSelectX;
     public float newGameX;
-    public float optionsX;
     public float creditsX;
     public float quitX;
 
@@ -40,10 +37,7 @@ public class mainmenu : MonoBehaviour {
         {
             SceneManager.LoadScene(2);
         }
-        if (GUI.Button(new Rect(Screen.width * optionsX, Screen.height * optionsY, Screen.width * .25f, Screen.height * .075f), "Options", options))
-        {
-            //SceneManager.LoadScene();
-        }
+
         if(GUI.Button(new Rect(Screen.width * creditsX, Screen.height * creditsY, Screen.width * .25f, Screen.height * .075f), "Credits", credits))
         {
             //SceneManager.LoadScene();

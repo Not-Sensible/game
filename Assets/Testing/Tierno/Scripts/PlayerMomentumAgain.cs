@@ -9,29 +9,40 @@ public class PlayerMomentumAgain : MonoBehaviour {
     public float GravityStrength;
     public float X, Y; //X and Y of the player
     public TerrainObject Block;
-    private float raycastdistance=10.0f;
+    private float raycastdistance=8.0f;
     private Rigidbody2D rig2d;
     private Animator animy;
     private bool playermoving;
     public LayerMask CollideList; //Temporary, dimension shifting will require lots of these, although I can imagine more blunt ways of doing it
-    private float groundslide = 20;
+    public LayerMask wall;
+    private float groundslide = 25;
     public float GroundCheckRadius;
     private char direction; //Actual direction of the player
-    private char DesiredDir; //The desired direction
+    public char DesiredDir; //The desired direction
     public float slowdown;
     private float timeLeft;
     private float groundholder = 10.0f;
-    private bool flying = false;
+    public bool flying = false;
     public bool onGround;
+    public AudioClip jumpsound;
+    private AudioSource source;
+    public AudioClip Death;
+    private float lowPitchRange = .75F;
+    private float highPitchRange = 1.5F;
     public Transform TouchingTerrain;
+    public Transform left;
+    public Transform right;
+    public Transform top;
     public Transform TouchingTerrain2;
     public Transform TerrainRight;
     public Transform TerrainLeft;
+    public bool moveright = true;
+    public bool moveleft = true;
     private Transform JumpTransform;
     private Vector2 PreviousPos;
     private Transform Lastground;
     public float jumpY;
-    private bool stop;
+    private bool stop=false;
     System.TimeSpan ts;
     int elapsedtime;
     Stopwatch stopwatch = new Stopwatch();
@@ -50,24 +61,8 @@ public class PlayerMomentumAgain : MonoBehaviour {
         RealMaxspeed = maxspeed;
         stopjump.Start();
         stopwatch.Start();
+        source = GetComponent<AudioSource>();
 
-    }
-    void OnCollisionEnter2D(Collision2D coll)
-    {
-       // UnityEngine.Debug.Log("WHYYYYYYYYYYYYY");
-
-        if (coll.gameObject.tag == "wall" && X>0)
-        {
-            if (X > 0)
-                X = (X * -0.8f);
-
-            //X = 0;
-        }
-        else if (coll.gameObject.tag == "wall" && X < 0)
-        {
-            if (X < 0)
-                X = (-X * 0.8f);
-        }
     }
     void Awake() // jeff
     {
@@ -80,15 +75,62 @@ public class PlayerMomentumAgain : MonoBehaviour {
         Application.targetFrameRate = 60;
 #endif
     }
+    public void onDeath()
+    {
+        source.PlayOneShot(Death, 1.0f);
+    }
+    void Collisions()
+    {
+        RaycastHit2D ray = Physics2D.Raycast(left.position, Vector2.left, 0.01f);
+        if (ray == true && ray.transform.gameObject.tag == "Wall")
+        {
+            X = 0;
+            moveleft = false;
+        }
+        else
+            moveleft = true;
 
-
+        RaycastHit2D ray2 = Physics2D.Raycast(right.position, Vector2.right, 0.01f);
+        if (ray2 == true && ray2.transform.gameObject.tag == "Wall")
+        {
+            X = 0;
+            moveright = false;
+        }
+        else
+            moveright = true;
+        RaycastHit2D ray3 = Physics2D.Raycast(top.position, Vector2.up, 0.01f);
+        UnityEngine.Debug.Log((bool)ray3);
+        if (ray3 == true && ray3.transform.gameObject.tag == "Wall")
+        {
+            jumpY = 0;
+            jumping = false;
+        }
+        /*bool temp=Physics2D.OverlapCircle(new Vector2(TerrainRight.position.x, TerrainRight.position.y), GroundCheckRadius, wall); //Code to work out if the player is on terrain or not
+        if (temp == true)
+        {
+            UnityEngine.Debug.Log("WHY");
+            X = 0;
+            moveright = false;
+        }
+        else
+            moveright = true;
+        Physics2D.OverlapCircle(new Vector2(TerrainLeft.position.x, TerrainLeft.position.y), GroundCheckRadius, wall); //Code to work out if the player is on terrain or not
+       
+        if (temp == true)
+        {
+            X = 0;
+            moveleft = false;
+        }
+        else
+            moveleft = true;*/
+    }
     void AngleCheck() //This is used to work out if the player is on a 60 degree angle, if they are, it checks with a raycast if the next block is 90 degrees or not, as the player usually falls if it is.
     {
         if (transform.rotation.eulerAngles.z >= 60 && transform.rotation.eulerAngles.z <= 80 || transform.rotation.eulerAngles.z <= 300 && transform.rotation.eulerAngles.z >= 280) //Checks angles
         {
             if (X < 0)  //Works out if the player is moving left
             {
-                RaycastHit2D ray = Physics2D.Raycast(new Vector2(TerrainLeft.position.x, TerrainLeft.position.y), Vector2.right * 15,8); //Raycasts from the left floating orb boi
+                RaycastHit2D ray = Physics2D.Raycast(new Vector2(TerrainLeft.position.x, TerrainLeft.position.y), Vector2.right * 15,raycastdistance); //Raycasts from the left floating orb boi
                 if (ray == true && ray.transform.gameObject.tag == "block" && ray.transform.gameObject.transform.rotation.eulerAngles.z == 90.0f)  //Checks if the object detected is infact a block and that the rotation is 90 degrees
                 {
                     transform.rotation = ray.transform.gameObject.transform.rotation; //Sets the player's roation to that block.
@@ -96,7 +138,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
             }
             if (X > 0)  //Sees if the player is moving right
             {
-                RaycastHit2D ray = Physics2D.Raycast(new Vector2(TerrainRight.position.x, TerrainRight.position.y), Vector2.left * 15,8);  //Raycasts from the Right floating orb boi
+                RaycastHit2D ray = Physics2D.Raycast(new Vector2(TerrainRight.position.x, TerrainRight.position.y), Vector2.left * 15, raycastdistance);  //Raycasts from the Right floating orb boi
                 if (ray == true && ray.transform.gameObject.tag == "block" && ray.transform.gameObject.transform.rotation.eulerAngles.z == 270.0f) //Checks if the object detected is infact a block and that the rotation is -90 degrees
                 {
                     transform.rotation = ray.transform.gameObject.transform.rotation;//Sets the player's roation to that block.
@@ -133,7 +175,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
     }
     private void RaycastingTerrain()  //This script is being used to test the terrain beneath the player and translate the player to the angle beneath them, preventing issues with terrain.
     {
-        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x,TouchingTerrain.position.y), Vector2.down*15,8);  //Defining the ray and its path, Trying to offset the ray in testing as it gets stuck in the player object
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x,TouchingTerrain.position.y), Vector2.down*15, raycastdistance/2);  //Defining the ray and its path, Trying to offset the ray in testing as it gets stuck in the player object
         if (ray == true && ray.transform.gameObject.tag == "block" && ray.transform.gameObject.transform.eulerAngles.z!=90.0f || ray == true && ray.transform.gameObject.tag == "block" && ray.transform.gameObject.transform.eulerAngles.z != 270.0f )  //If true do this
             transform.rotation = ray.transform.gameObject.transform.rotation; //Sets the player's angle to the terrain
         else
@@ -142,7 +184,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
     }
     private GameObject raycastreturn()
     {
-        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15,8);
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15, raycastdistance);
         if (ray == true && ray.transform.gameObject.transform.tag == "block")
         {
             return ray.transform.gameObject;
@@ -151,7 +193,22 @@ public class PlayerMomentumAgain : MonoBehaviour {
     }
     bool RayCastCheck()   //This is used to check if the player is on the same angle as the terrain directly beneath them
     {   //The Rest of the function is the same as the raycast check above
-        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15,8);
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15, 4);
+        if (ray == true && onGround==true)
+        {
+            float d = (float)System.Math.Sqrt(System.Math.Pow(ray.transform.gameObject.transform.position.x - TouchingTerrain.position.x, 2) + System.Math.Pow(ray.transform.gameObject.transform.position.y - TouchingTerrain.position.y, 2));
+            if (d < 0.3f && ray.transform.gameObject.transform.rotation.eulerAngles.z <= 30.0f || d < 0.3f && ray.transform.gameObject.transform.rotation.eulerAngles.z >= 330.0f)
+            {
+                transform.position = new Vector2(transform.position.x, transform.position.y + 0.4230019f);
+            }
+            else if (d > 0.7f && ray.transform.gameObject.transform.rotation.eulerAngles.z <= 30.0f || d > 0.7f && ray.transform.gameObject.transform.rotation.eulerAngles.z >= 330.0f)
+            {
+                transform.position = new Vector2(transform.position.x, transform.position.y - 0.1f);
+            }
+            
+        }
+        // if (ray.transform.gameObject.transform.rotation.eulerAngles.z == 0)
+           // transform.position = new Vector2(transform.position.x, transform.position.y + GroundCheckRadius);
         if (ray == true && ray.transform.gameObject.transform.tag=="block")
         {
             transform.rotation = ray.transform.gameObject.transform.rotation;
@@ -189,7 +246,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     }
     void checks() //Clock is here, pretty useless really, should be reliant on something else.
     {
-        onGround = Physics2D.OverlapCircle(TouchingTerrain.position, GroundCheckRadius, CollideList); //Code to work out if the player is on terrain or not
+        onGround = Physics2D.OverlapCircle(new Vector2(TouchingTerrain.position.x,TouchingTerrain.position.y), GroundCheckRadius, CollideList); //Code to work out if the player is on terrain or not
         //onGround = Physics2D.OverlapCircle(TouchingTerrain2.position, GroundCheckRadius, CollideList); //Code to work out if the player is on terrain or not
         if(onGround==true)
         {
@@ -238,12 +295,12 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     void InputScript()
     {
         //Placeholder
-        if (Input.GetKeyDown("a"))
+        if (Input.GetKeyDown("a") && moveleft==true)
         {
             DesiredDir = 'L';
             playermoving = true;
         }
-        else if (Input.GetKeyDown("d"))
+        else if (Input.GetKeyDown("d") && moveright == true)
         {
             DesiredDir = 'R';
             playermoving = true;
@@ -265,6 +322,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
             flying = true;
             jumping = true;
             //Y = JumpValue;
+            source.PlayOneShot(jumpsound, 0.4f);
             jumpY = JumpValue;
             JumpTransform = transform;
             transform.Translate(0, 60*Time.deltaTime,0,JumpTransform);
@@ -275,7 +333,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
             transform.Translate(X * Time.deltaTime, 0, 0,Lastground);
         else if(onGround==false && jumping==true)
         {
-            transform.Translate(X * Time.deltaTime, 0, 0, JumpTransform);
+          //  transform.Translate(X * Time.deltaTime, 0, 0, JumpTransform);
         }
         else
         {
@@ -283,13 +341,13 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
         }
         if (onGround != true && flying==false)
         {
-            transform.Translate(0, -groundholder * Time.deltaTime, 0, 0);
+            transform.Translate(0, -groundholder * Time.deltaTime, 0);
         }
         else if(onGround!=true && flying==true)
         {
             if (Y > -50 && jumpY <= 0)
             {
-                Y += (-GravityStrength * 3 * Time.deltaTime);
+                Y += (-GravityStrength *3.0f * Time.deltaTime);
                 transform.Translate(0, Y * Time.deltaTime, 0, Space.World);
             }
             else if (JumpTransform != null)
@@ -303,15 +361,15 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     }
     void Movement(char dir,bool IsOnGround)
     {
-        if (onGround == true && dir == 'L' && X > -RealMaxspeed)
-            X += -speed * Time.deltaTime;
-        else if (onGround == true && dir == 'R' && X < RealMaxspeed)
-            X += speed * Time.deltaTime;
-        if (onGround != true && dir == 'L' && X > -RealMaxspeed)
-            X += (-speed * 0.55f) * Time.deltaTime;
-        else if (onGround != true && dir == 'R' && X < RealMaxspeed)
-            X += (speed*0.55f) * Time.deltaTime;
 
+        if (onGround == true && dir == 'L' && X > -RealMaxspeed && moveleft!=false)
+            X += -speed * Time.deltaTime;
+        else if (onGround == true && dir == 'R' && X < RealMaxspeed && moveright != false)
+            X += speed * Time.deltaTime;
+        if (onGround != true && dir == 'L' && X > -RealMaxspeed && moveleft != false)
+            X += (-speed * 0.55f) * Time.deltaTime;
+        else if (onGround != true && dir == 'R' && X < RealMaxspeed && moveright != false)
+            X += (speed*0.55f) * Time.deltaTime;
     }
 
     void TerrainSlowDown(float slowdownlocal)
@@ -373,7 +431,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
 
             }
         }
-        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15,8);
+        RaycastHit2D ray = Physics2D.Raycast(new Vector2(TouchingTerrain.position.x, TouchingTerrain.position.y), Vector2.down * 15, raycastdistance);
 
         if (ray == true && ray.transform.gameObject.transform.tag == "block")
         {
@@ -405,10 +463,10 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
 
     // Update is called once per frame
     void Update () {
+        Collisions();
         InputScript();
         Momentum();
         checks();
-
     }
     void FixedUpdate()
     {

@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4721597822757858}
   - component: {fileID: 212014089276014026}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: blocks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 4865802972109686}
   - component: {fileID: 212352164845596208}
   - component: {fileID: 114858529559452378}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Next Terrain Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   - component: {fileID: 4404178131780458}
   - component: {fileID: 212704527439417762}
   - component: {fileID: 114026295008510840}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Next Terrain Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ GameObject:
   - component: {fileID: 50650469272710594}
   - component: {fileID: 61404320591879140}
   - component: {fileID: 114976039853060292}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Player Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 4120450292432338}
   - component: {fileID: 212858112073475714}
   - component: {fileID: 114358020870718488}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Ground Check
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1653045463116430}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.618, z: 0}
+  m_LocalPosition: {x: 0, y: -0.733, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4878534297914464}
@@ -156,7 +156,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1404784074530088}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 282.71, y: -60.05, z: 0}
+  m_LocalPosition: {x: 119.16, y: -41.38, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4721597822757858}
@@ -177,14 +177,14 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 1
-  m_Mass: 1.000174
+  m_Mass: 0.99980456
   m_LinearDrag: 0
-  m_AngularDrag: 0
+  m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 0
 --- !u!61 &61404320591879140
 BoxCollider2D:
@@ -197,20 +197,9 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.0010223389, y: 0.0005648732}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
+  m_Offset: {x: -0.0004749298, y: 0.000564903}
   serializedVersion: 2
-  m_Size: {x: 0.99905396, y: 1.0011212}
-  m_EdgeRadius: 0
+  m_Size: {x: 0.9986849, y: 1.0011212}
 --- !u!114 &114026295008510840
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -255,25 +244,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd19f916e80dbe64ca819f8c3c96c48c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxspeed: 28
-  speed: 15
+  maxspeed: 20
+  speed: 20
   RealMaxspeed: 0
-  GravityStrength: 12
+  GravityStrength: 6
   X: 0
   Y: 0
   Block: {fileID: 0}
   CollideList:
     serializedVersion: 2
-    m_Bits: 257
+    m_Bits: 256
   GroundCheckRadius: 0.2
   slowdown: 20
   onGround: 0
   TouchingTerrain: {fileID: 4120450292432338}
-  TouchingTerrain2: {fileID: 0}
   TerrainRight: {fileID: 4865802972109686}
   TerrainLeft: {fileID: 4404178131780458}
-  jumpY: 0
-  JumpValue: 18
 --- !u!212 &212014089276014026
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -304,18 +290,11 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
-  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 2761be647fe008341aa44a1c0506e5c8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
 --- !u!212 &212301953400387516
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -346,18 +325,11 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
-  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
-  m_MaskInteraction: 0
 --- !u!212 &212352164845596208
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -388,18 +360,11 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
-  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
 --- !u!212 &212704527439417762
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -430,18 +395,11 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
-  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
 --- !u!212 &212858112073475714
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -472,15 +430,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
-  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0

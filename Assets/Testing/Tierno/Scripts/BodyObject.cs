@@ -16,12 +16,12 @@ public class BodyObject : MonoBehaviour {
 	}
     void FixedUpdate()
     {
-        if (player.DesiredDir == 'R' && dir!='R')
+        if (player.DesiredDir == 'R' && dir!='R' && player.move==true)
         {
             transform.localRotation = Quaternion.Euler(transform.rotation.x, transform.rotation.eulerAngles.y+180, transform.rotation.z);
             dir = 'R';
         }
-        else if (player.DesiredDir == 'L' && dir != 'L')
+        else if (player.DesiredDir == 'L' && dir != 'L' && player.move == true)
         {
             transform.localRotation = Quaternion.Euler(transform.rotation.x, transform.rotation.eulerAngles.y-180, transform.rotation.z);
             dir = 'L';

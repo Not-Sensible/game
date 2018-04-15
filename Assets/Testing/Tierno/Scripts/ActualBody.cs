@@ -23,12 +23,12 @@ public class ActualBody : MonoBehaviour {
 	}
      void FixedUpdate()
     {
-        if (player.DesiredDir == 'R' && dir != 'R')
+        if (player.DesiredDir == 'R' && dir != 'R' && player.move == true)
         {
             m_SpriteRenderer.sprite = sprite1;
             dir = 'R';
         }
-        else if (player.DesiredDir == 'L' && dir != 'L')
+        else if (player.DesiredDir == 'L' && dir != 'L' && player.move == true)
         {
             m_SpriteRenderer.sprite = sprite2;
             dir = 'L';

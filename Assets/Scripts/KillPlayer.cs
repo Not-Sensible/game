@@ -26,7 +26,7 @@ public class KillPlayer : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D collision)
     {
 
-        if(collision.name=="Player")  //remove the hit
+        if(collision.gameObject.tag=="Player")  //remove the hit
         {
             levelController.PlayerSpawn();
            // Healthybar.setCurrentHealth(hp);

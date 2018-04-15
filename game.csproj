@@ -90,7 +90,6 @@
     <Compile Include="Assets\Scripts\Player_Script2.cs" />
     <Compile Include="Assets\Scripts\checkpoint animation.cs" />
     <Compile Include="Assets\Testing\Dave\AI test\Scripts\HostileAI.cs" />
-    <Compile Include="Assets\Testing\Dave\AI test\Scripts\walls.cs" />
     <Compile Include="Assets\Testing\Dave\Options.cs" />
     <Compile Include="Assets\Testing\Dave\levelSelect.cs" />
     <Compile Include="Assets\Testing\Dave\mainmenu.cs" />
@@ -98,6 +97,7 @@
     <Compile Include="Assets\Testing\Luis\ShiftingController.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\ActualBody.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\BodyObject.cs" />
+    <Compile Include="Assets\Testing\Tierno\Scripts\GoalObject.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\GroundCheckScript.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\PlayerMomentumAgain.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\PlayerMomentumOriginal.cs" />
@@ -107,6 +107,7 @@
     <Compile Include="Assets\Testing\Tierno\Scripts\Ramp.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\TerrainObject.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\TrackAnimation.cs" />
+    <Compile Include="Assets\Turret.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

@@ -8,3 +8,15 @@ test_Data/
 test\.exe
 
 *.meta
+
+Temp/UnityLockfile
+
+*.ide
+
+*.lock
+
+\.vs/game/v15/\.suo
+
+game\.csproj
+
+game\.sln

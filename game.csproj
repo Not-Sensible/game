@@ -81,12 +81,14 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Block.cs" />
     <Compile Include="Assets\Scripts\Camera_Script.cs" />
+    <Compile Include="Assets\Scripts\CheckpointAnimation.cs" />
     <Compile Include="Assets\Scripts\CheckpointObject.cs" />
     <Compile Include="Assets\Scripts\HeathBar.cs" />
     <Compile Include="Assets\Scripts\KillPlayer.cs" />
     <Compile Include="Assets\Scripts\LevelController.cs" />
     <Compile Include="Assets\Scripts\Player_Script.cs" />
     <Compile Include="Assets\Scripts\Player_Script2.cs" />
+    <Compile Include="Assets\Scripts\checkpoint animation.cs" />
     <Compile Include="Assets\Testing\Dave\AI test\Scripts\HostileAI.cs" />
     <Compile Include="Assets\Testing\Dave\AI test\Scripts\walls.cs" />
     <Compile Include="Assets\Testing\Dave\Options.cs" />

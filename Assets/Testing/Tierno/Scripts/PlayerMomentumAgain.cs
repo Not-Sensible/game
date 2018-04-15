@@ -24,9 +24,15 @@ public class PlayerMomentumAgain : MonoBehaviour {
     private float groundholder = 10.0f;
     public bool flying = false;
     public bool onGround;
+    public AudioClip jumpsound;
+    private AudioSource source;
+    public AudioClip Death;
+    private float lowPitchRange = .75F;
+    private float highPitchRange = 1.5F;
     public Transform TouchingTerrain;
     public Transform left;
     public Transform right;
+    public Transform top;
     public Transform TouchingTerrain2;
     public Transform TerrainRight;
     public Transform TerrainLeft;
@@ -55,6 +61,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
         RealMaxspeed = maxspeed;
         stopjump.Start();
         stopwatch.Start();
+        source = GetComponent<AudioSource>();
 
     }
     void Awake() // jeff
@@ -68,7 +75,10 @@ public class PlayerMomentumAgain : MonoBehaviour {
         Application.targetFrameRate = 60;
 #endif
     }
-
+    public void onDeath()
+    {
+        source.PlayOneShot(Death, 1.0f);
+    }
     void Collisions()
     {
         RaycastHit2D ray = Physics2D.Raycast(left.position, Vector2.left, 0.01f);
@@ -88,6 +98,13 @@ public class PlayerMomentumAgain : MonoBehaviour {
         }
         else
             moveright = true;
+        RaycastHit2D ray3 = Physics2D.Raycast(top.position, Vector2.up, 0.01f);
+        UnityEngine.Debug.Log((bool)ray3);
+        if (ray3 == true && ray3.transform.gameObject.tag == "Wall")
+        {
+            jumpY = 0;
+            jumping = false;
+        }
         /*bool temp=Physics2D.OverlapCircle(new Vector2(TerrainRight.position.x, TerrainRight.position.y), GroundCheckRadius, wall); //Code to work out if the player is on terrain or not
         if (temp == true)
         {
@@ -305,6 +322,7 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
             flying = true;
             jumping = true;
             //Y = JumpValue;
+            source.PlayOneShot(jumpsound, 0.4f);
             jumpY = JumpValue;
             JumpTransform = transform;
             transform.Translate(0, 60*Time.deltaTime,0,JumpTransform);

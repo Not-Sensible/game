@@ -6,10 +6,13 @@ public class LevelController : MonoBehaviour {
 
 
     public GameObject CurrentCheckpoint;
-    private Player_Script2 player;
+    public PlayerMomentumAgain player;
+    public AudioClip Music;
+    private AudioSource source;
     // Use this for initialization
     void Start () {
-        player = FindObjectOfType<Player_Script2>();
+        source = GetComponent<AudioSource>();
+        source.PlayOneShot(Music, 0.8f);
     }
 	
 	// Update is called once per frame
@@ -17,7 +20,11 @@ public class LevelController : MonoBehaviour {
 	}
     public void PlayerSpawn()   //Acessible for every script, to spawn the player
     {
-        player.transform.position = CurrentCheckpoint.transform.position;
+        player.X = 0;
+        player.Y = 0;
+        player.onDeath();
+        player.transform.position = new Vector3 (CurrentCheckpoint.transform.position.x, CurrentCheckpoint.transform.position.y,player.transform.position.z);
+        //CurrentCheckpoint.
 
     }
 

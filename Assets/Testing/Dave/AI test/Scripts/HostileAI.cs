@@ -8,17 +8,22 @@ public class HostileAI : MonoBehaviour {
     float movingSpeed = 1f;
     float minDist;
     float maxDist;
+    public Sprite hostile1;
+    public Sprite hostile2;
     public Transform Wall1;
     public Transform Wall2;
     float wall1;
     float wall2;
+    private SpriteRenderer spriteRenderer;
 
     // Use this for initialization
     void Start () {
         direction = -1;
-            
-       minDist =  transform.position.x + Dist;
-       maxDist =  transform.position.x - Dist;
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        minDist =  transform.position.x + Dist;
+        maxDist =  transform.position.x - Dist;
+        
 
          wall1 = Wall1.transform.position.x;
          wall2 = Wall2.transform.position.x;
@@ -42,37 +47,28 @@ public class HostileAI : MonoBehaviour {
         switch (direction)
         {
             case -1:
-                if(transform.position.x < minDist)
+                if(transform.position.x < wall1)
                 {
 
                     transform.Translate(movingSpeed*Time.deltaTime, 0.0f, 0.0f, Space.World);
                 } else
                 {
-
                     direction = 1;
-                    
+                    spriteRenderer.sprite = hostile1;  
                 }
-                if (transform.position.x > wall1)
-                {
-                    direction = 1;
-                }
-
                 break;
             case 1:
 
-                if(transform.position.x > maxDist)
+                if(transform.position.x > wall2)
                 {
 
                     transform.Translate(-movingSpeed*Time.deltaTime, 0.0f, 0.0f, Space.World);
                 }
                 else
                 {
-                   
+  
                     direction = -1;
-                }
-                if (transform.position.x > wall1)
-                {
-                    direction = -1;
+                    spriteRenderer.sprite = hostile2;
                 }
 
                 break;

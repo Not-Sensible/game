@@ -6,11 +6,13 @@ public class Turret : MonoBehaviour {
     public GameObject bullet;
     public Transform range;
     public Transform barrel;
+    public AudioClip boom;
+    public AudioSource source;
     public float speed;
 	// Use this for initialization
 	void Start () {
-		
-	}
+        source = GetComponent<AudioSource>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -18,6 +20,7 @@ public class Turret : MonoBehaviour {
         if(bullet.transform.position.y<range.transform.position.y)
         {
             bullet.transform.position = barrel.position;
+            source.PlayOneShot(boom);
         }
 	}
 }

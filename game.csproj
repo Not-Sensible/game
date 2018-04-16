@@ -79,6 +79,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Core.cs" />
+    <Compile Include="Assets\Coresbody.cs" />
     <Compile Include="Assets\Scripts\Block.cs" />
     <Compile Include="Assets\Scripts\Camera_Script.cs" />
     <Compile Include="Assets\Scripts\CheckpointAnimation.cs" />
@@ -97,6 +99,7 @@
     <Compile Include="Assets\Testing\Luis\ShiftingController.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\ActualBody.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\BodyObject.cs" />
+    <Compile Include="Assets\Testing\Tierno\Scripts\Corebody2.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\GoalObject.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\GroundCheckScript.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\PlayerMomentumAgain.cs" />

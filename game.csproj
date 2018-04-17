@@ -108,6 +108,7 @@
     <Compile Include="Assets\Testing\Tierno\Scripts\PlayerScriptRegret.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\PleaseRamp.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\Ramp.cs" />
+    <Compile Include="Assets\Testing\Tierno\Scripts\TemporaryFilter.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\TerrainObject.cs" />
     <Compile Include="Assets\Testing\Tierno\Scripts\TrackAnimation.cs" />
     <Compile Include="Assets\Turret.cs" />

@@ -7,6 +7,7 @@ public class PlayerMomentumAgain : MonoBehaviour {
     public float speed;
     public float RealMaxspeed; //The Maxspeed changed by terrain and angles and state
     public float GravityStrength;
+    public bool move = true;
     public float X, Y; //X and Y of the player
     public TerrainObject Block;
     private float raycastdistance=8.0f;
@@ -84,7 +85,8 @@ public class PlayerMomentumAgain : MonoBehaviour {
         RaycastHit2D ray = Physics2D.Raycast(left.position, Vector2.left, 0.01f);
         if (ray == true && ray.transform.gameObject.tag == "Wall")
         {
-            X = 0;
+            if(X<0)
+                X = 0;
             moveleft = false;
         }
         else
@@ -93,13 +95,13 @@ public class PlayerMomentumAgain : MonoBehaviour {
         RaycastHit2D ray2 = Physics2D.Raycast(right.position, Vector2.right, 0.01f);
         if (ray2 == true && ray2.transform.gameObject.tag == "Wall")
         {
-            X = 0;
+            if (X > 0)
+                X = 0;
             moveright = false;
         }
         else
             moveright = true;
         RaycastHit2D ray3 = Physics2D.Raycast(top.position, Vector2.up, 0.01f);
-        UnityEngine.Debug.Log((bool)ray3);
         if (ray3 == true && ray3.transform.gameObject.tag == "Wall")
         {
             jumpY = 0;
@@ -295,29 +297,29 @@ Merry ⛄️🌟 Christmas Babe 🔥🍑👅 I hope 🙏🏼👏🏼 Santa comes
     void InputScript()
     {
         //Placeholder
-        if (Input.GetKeyDown("a") && moveleft==true)
+        if (Input.GetKeyDown("a") && moveleft==true && move==true)
         {
             DesiredDir = 'L';
             playermoving = true;
         }
-        else if (Input.GetKeyDown("d") && moveright == true)
+        else if (Input.GetKeyDown("d") && moveright == true && move == true)
         {
             DesiredDir = 'R';
             playermoving = true;
         }
-        if (Input.GetKeyUp("a"))
+        if (Input.GetKeyUp("a") || move==false)
         {
             // X = 0;
             DesiredDir = 'N';
             playermoving = false;
         }
-        else if (Input.GetKeyUp("d"))
+        else if (Input.GetKeyUp("d")|| move==false)
         {
             //X = 0;
             DesiredDir = 'N';
             playermoving = false;
         }
-        if (Input.GetKeyDown("space") && onGround==true)
+        if (Input.GetKeyDown("space") && onGround==true && move==true)
         {
             flying = true;
             jumping = true;

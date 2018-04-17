@@ -11,6 +11,9 @@ public class TemporaryFilter : MonoBehaviour {
     public Sprite sprite3; //Orange
     public Sprite sprite4; //Green
     public Sprite sprite5; //Black
+    public AudioClip dimensionon;
+    public AudioClip dimensionoff;
+    private AudioSource source;
     char previous;
     System.TimeSpan ts;
    public int elapsedtime;
@@ -21,6 +24,7 @@ public class TemporaryFilter : MonoBehaviour {
     {
         shifter = FindObjectOfType<ShiftingController>();
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
+        source = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -34,7 +38,7 @@ public class TemporaryFilter : MonoBehaviour {
         System.TimeSpan ts = stopwatch.Elapsed;
         int elapsedtime = ts.Seconds;
         // UnityEngine.Debug.Log(elapsedtime);
-        if (elapsedtime == 2)
+        if (elapsedtime == 3)
         {
             stopwatch.Reset();
             sprite.sprite = null;
@@ -48,36 +52,43 @@ public class TemporaryFilter : MonoBehaviour {
         if (shifter.charDimensionNumber == 'p' && previous!=shifter.charDimensionNumber && m_SpriteRenderer.sprite != sprite2)
         {
             m_SpriteRenderer.sprite = sprite2;
+            source.PlayOneShot(dimensionon);
             count = true;
             previous = shifter.charDimensionNumber;
         }
         else if (shifter.charDimensionNumber == 'b' && previous != shifter.charDimensionNumber && m_SpriteRenderer.sprite != sprite1)
         {
             m_SpriteRenderer.sprite = sprite1;
+            source.PlayOneShot(dimensionon);
             count = true;
             previous = shifter.charDimensionNumber;
         }
         else if (shifter.charDimensionNumber == 'o' && previous != shifter.charDimensionNumber && m_SpriteRenderer.sprite != sprite3)
         {
             m_SpriteRenderer.sprite = sprite3;
+            source.PlayOneShot(dimensionon);
             count = true;
             previous = shifter.charDimensionNumber;
         }
         else if (shifter.charDimensionNumber == 'g' && previous != shifter.charDimensionNumber && m_SpriteRenderer.sprite != sprite4)
         {
             m_SpriteRenderer.sprite = sprite4;
+            source.PlayOneShot(dimensionon);
             count = true;
             previous = shifter.charDimensionNumber;
         }
         else if (shifter.charDimensionNumber == 'w' && previous != shifter.charDimensionNumber && m_SpriteRenderer.sprite != sprite5)
         {
             m_SpriteRenderer.sprite = sprite5;
+            source.PlayOneShot(dimensionon);
             count = true;
             previous = shifter.charDimensionNumber;
         }
         if(count==true)
         {
-            m_SpriteRenderer=clockFunction(m_SpriteRenderer);
+            //source.clip = dimensionoff;
+            // source.Play();
+            m_SpriteRenderer = clockFunction(m_SpriteRenderer);
         }
 
     }

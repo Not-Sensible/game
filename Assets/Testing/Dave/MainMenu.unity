@@ -206,7 +206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d25aae06b6fb23a408af520b6fe0178e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  background: {fileID: 2800000, guid: 514492f2c0c92804eb7c3ce7b6448b42, type: 3}
+  background: {fileID: 2800000, guid: 0713b3b9f0423634ebcaa247926868ab, type: 3}
   levelSelect:
     m_Name: 
     m_Normal:

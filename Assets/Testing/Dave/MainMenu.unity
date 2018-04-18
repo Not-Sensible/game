@@ -278,11 +278,11 @@ MonoBehaviour:
   newGame:
     m_Name: 
     m_Normal:
-      m_Background: {fileID: 2800000, guid: 32705dc82203ef645a421d02d7ab6cbf, type: 3}
+      m_Background: {fileID: 2800000, guid: 87b1f0494435da14d8cd9fb7e70e86a2, type: 3}
       m_ScaledBackgrounds: []
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
     m_Hover:
-      m_Background: {fileID: 2800000, guid: 2cceb5304c115e449873ef7a5d0ca5d3, type: 3}
+      m_Background: {fileID: 2800000, guid: bdc69aad7b112d7478be79697f35f28e, type: 3}
       m_ScaledBackgrounds: []
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
     m_Active:
@@ -412,11 +412,11 @@ MonoBehaviour:
   quit:
     m_Name: 
     m_Normal:
-      m_Background: {fileID: 2800000, guid: 32705dc82203ef645a421d02d7ab6cbf, type: 3}
+      m_Background: {fileID: 2800000, guid: f9edc50f1a3277b47abb4fecdc419e98, type: 3}
       m_ScaledBackgrounds: []
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
     m_Hover:
-      m_Background: {fileID: 2800000, guid: 2cceb5304c115e449873ef7a5d0ca5d3, type: 3}
+      m_Background: {fileID: 2800000, guid: 22436dd350d237a4eb3b955a149b3253, type: 3}
       m_ScaledBackgrounds: []
       m_TextColor: {r: 0, g: 0, b: 0, a: 1}
     m_Active:
@@ -477,10 +477,10 @@ MonoBehaviour:
     m_StretchWidth: 1
     m_StretchHeight: 0
   levelSelectY: 0.45
-  newGameY: 0.52
+  newGameY: 0.59
   creditsY: 0.59
-  quitY: 0.66
+  quitY: 0.75
   levelSelectX: 0.75
-  newGameX: 0.75
+  newGameX: 0.71
   creditsX: 0.75
-  quitX: 0.75
+  quitX: 0.7

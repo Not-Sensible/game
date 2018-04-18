@@ -4,14 +4,11 @@ using UnityEngine;
 
 public class HostileAI : MonoBehaviour {
     int direction;
-    float Dist = 100f;
-    float movingSpeed = 1f;
-    float minDist;
-    float maxDist;
+    float movingSpeed = 10f;
     public Sprite hostile1;
     public Sprite hostile2;
-    public Transform Wall1;
-    public Transform Wall2;
+    public Transform stopRight;
+    public Transform stopLeft;
     float wall1;
     float wall2;
     private SpriteRenderer spriteRenderer;
@@ -21,12 +18,10 @@ public class HostileAI : MonoBehaviour {
         direction = -1;
 
         spriteRenderer = GetComponent<SpriteRenderer>();
-        minDist =  transform.position.x + Dist;
-        maxDist =  transform.position.x - Dist;
         
 
-         wall1 = Wall1.transform.position.x;
-         wall2 = Wall2.transform.position.x;
+         wall1 = stopRight.transform.position.x;
+         wall2 = stopLeft.transform.position.x;
     }
 
     public int getDirection()
@@ -74,6 +69,8 @@ public class HostileAI : MonoBehaviour {
                 break;
         }
 		
+
+
 	}
     
 }

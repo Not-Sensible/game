@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class HostileAI : MonoBehaviour {
-    public LevelController levelController;
     int direction;
-    float movingSpeed = 10f;
+    float movingSpeed = 3.0f;
     public Sprite hostile1;
     public Sprite hostile2;
     public Transform stopRight;
@@ -19,9 +18,9 @@ public class HostileAI : MonoBehaviour {
         direction = -1;
 
         spriteRenderer = GetComponent<SpriteRenderer>();
-        levelController = FindObjectOfType<LevelController>();
+        
 
-        wall1 = stopRight.transform.position.x;
+         wall1 = stopRight.transform.position.x;
          wall2 = stopLeft.transform.position.x;
     }
 
@@ -38,8 +37,7 @@ public class HostileAI : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
-        
-
+                
 
         switch (direction)
         {
@@ -74,14 +72,5 @@ public class HostileAI : MonoBehaviour {
 
 
 	}
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-
-        if (collision.gameObject.tag == "Player")
-        {
-            levelController.PlayerSpawn();
-
-        }
-    }
-
+    
 }

@@ -9,7 +9,7 @@ public class DimensionScript : MonoBehaviour
     private    BoxCollider2D collide;
     public LevelController levelController;
     public ShiftingController shiftcontrol;
-    public char dimension;
+    public char dimension='b';
 	// Use this for initialization
 	void Start ()
     {

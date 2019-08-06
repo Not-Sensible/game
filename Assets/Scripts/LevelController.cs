@@ -29,7 +29,8 @@ public class LevelController : MonoBehaviour {
             float t = Time.time - startTime;
             string minutes = ((int)t / 60).ToString();
             string seconds = (t % 60).ToString();
-            Timer.text = ("Time" + ": " + minutes + ":" + seconds[0] + seconds[1]);
+            if(seconds.Length>1)
+                Timer.text = ("Time" + ": " + minutes + ":" + seconds[0] + seconds[1]);
         }
 	}
     public void PlayerSpawn()   //Acessible for every script, to spawn the player

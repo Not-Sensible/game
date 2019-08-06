@@ -18,7 +18,7 @@ public class CheckpointObject : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D collision)   //Detects if the player is in contact with the checkpoint
     {
-        if (collision.name == "Player")
+        if (collision.gameObject.tag == "Player")
         {
             levelController.CurrentCheckpoint = gameObject;  //Assigns the new checkpoint
             source.PlayOneShot(telporterOn, 1.0f);
@@ -27,7 +27,7 @@ public class CheckpointObject : MonoBehaviour {
     }
     void OnTriggerExit2D(Collider2D collision)   //Detects if the player is in contact with the checkpoint
     {
-        if (collision.name == "Player")
+        if (collision.gameObject.tag == "Player")
         {
             levelController.CurrentCheckpoint = gameObject;  //Assigns the new checkpoint
             source.PlayOneShot(telporterOff, 1.0f);

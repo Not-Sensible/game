@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ShiftingController : MonoBehaviour
 {
-    public char charDimensionNumber= 'n';
+    public char charDimensionNumber= 'b';
     
     // Use this for initialization
     void Start ()
@@ -18,48 +18,35 @@ public class ShiftingController : MonoBehaviour
 	void Update ()
     {
 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) //Normal Dimension
-        {
-            Debug.Log("Normal Dimension");
-            charDimensionNumber = 'n';
-        }
+        
 
-        if (Input.GetKeyDown(KeyCode.Alpha2))  //Blue Dimension
+        if (Input.GetKeyDown(KeyCode.Alpha1))  //Blue Dimension
         {
             charDimensionNumber = 'n';
-            Debug.Log("Blue");
             charDimensionNumber = 'b';
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha3)) // Purple Dimension
+        if (Input.GetKeyDown(KeyCode.Alpha2)) // Purple Dimension
         {
             charDimensionNumber = 'n';
-            Debug.Log("Purple");
             charDimensionNumber = 'p';
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha4)) // Green Dimension
+        if (Input.GetKeyDown(KeyCode.Alpha3)) // Green Dimension
         {
             charDimensionNumber = 'n';
-            Debug.Log("Green");
             charDimensionNumber = 'g';
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha5)) // Orange Dimension
+        if (Input.GetKeyDown(KeyCode.Alpha4)) // Orange Dimension
         {
             charDimensionNumber = 'n';
-            Debug.Log("Orange");
             charDimensionNumber = 'o';
         }
-
-        if (Input.GetKeyDown(KeyCode.Alpha6)) // White Dimension
+        if (Input.GetKeyDown(KeyCode.Alpha5)) //Normal Dimension
         {
-            charDimensionNumber = 'n';
-            Debug.Log("White");
             charDimensionNumber = 'w';
         }
-
-
 
     }
 }
